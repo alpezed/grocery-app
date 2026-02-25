@@ -1,3 +1,4 @@
+import { Colors } from '@/constants/theme';
 import { useOnboardingStore } from '@/store/use-onboarding';
 import { FlashList } from '@shopify/flash-list';
 import type { ViewabilityConfigCallbackPairs } from '@shopify/flash-list/dist/FlashListProps';
@@ -169,7 +170,7 @@ const styles = StyleSheet.create({
 	description: {
 		textAlign: 'center',
 		fontSize: 15,
-		color: '#868889',
+		color: Colors.light.text,
 		lineHeight: 20,
 		fontFamily: 'Montserrat',
 	},
@@ -184,11 +185,11 @@ const styles = StyleSheet.create({
 	},
 	paginationText: {
 		fontSize: 15,
-		color: '#868889',
+		color: Colors.light.text,
 		fontFamily: 'Montserrat-SemiBold',
 	},
 	paginationTextActive: {
-		color: '#6CC51D',
+		color: Colors.light.primaryDark,
 	},
 	paginationTextDisabled: {
 		opacity: 0.5,
@@ -204,6 +205,6 @@ const styles = StyleSheet.create({
 		borderRadius: '100%',
 	},
 	bulletActive: {
-		backgroundColor: '#6CC51D',
+		backgroundColor: Colors.light.primaryDark,
 	},
 });

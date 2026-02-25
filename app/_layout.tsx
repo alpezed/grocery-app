@@ -27,7 +27,6 @@ export default function RootLayout() {
 		'Montserrat-Bold': require('@/assets/fonts/Montserrat-Bold.ttf'),
 	});
 	const completed = useOnboardingStore(state => state.completed);
-	console.log('completed', completed);
 
 	useEffect(() => {
 		if (loaded || error) {
