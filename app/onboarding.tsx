@@ -1,3 +1,4 @@
+import { useOnboardingStore } from '@/store/use-onboarding';
 import { FlashList } from '@shopify/flash-list';
 import type { ViewabilityConfigCallbackPairs } from '@shopify/flash-list/dist/FlashListProps';
 import { Image } from 'expo-image';
@@ -70,7 +71,15 @@ export default function Onboarding() {
 				index: nextIndex,
 				animated: true,
 			});
+		} else {
+			router.push('/(auth)/login');
+			useOnboardingStore.getState().complete();
 		}
+	};
+
+	const onSkipOnboarding = () => {
+		router.push('/(auth)/login');
+		useOnboardingStore.getState().complete();
 	};
 
 	const renderOnboardingItem = ({
@@ -105,7 +114,7 @@ export default function Onboarding() {
 				initialScrollIndex={0}
 			/>
 			<View style={styles.paginationContainer}>
-				<Pressable onPress={() => router.push('/(tabs)')}>
+				<Pressable onPress={onSkipOnboarding}>
 					<Text style={styles.paginationText}>Skip</Text>
 				</Pressable>
 				<View style={styles.paginationBullets}>
@@ -120,14 +129,7 @@ export default function Onboarding() {
 					))}
 				</View>
 				<Pressable onPress={scrollToNextItem}>
-					<Text
-						style={[
-							styles.paginationText,
-							currentIndex < onboardingData.length - 1
-								? styles.paginationTextActive
-								: styles.paginationTextDisabled,
-						]}
-					>
+					<Text style={[styles.paginationText, styles.paginationTextActive]}>
 						Next
 					</Text>
 				</Pressable>

@@ -10,6 +10,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useOnboardingStore } from '@/store/use-onboarding';
 import { useEffect } from 'react';
 
 export const unstable_settings = {
@@ -25,6 +26,8 @@ export default function RootLayout() {
 		'Montserrat-SemiBold': require('@/assets/fonts/Montserrat-SemiBold.ttf'),
 		'Montserrat-Bold': require('@/assets/fonts/Montserrat-Bold.ttf'),
 	});
+	const completed = useOnboardingStore(state => state.completed);
+	console.log('completed', completed);
 
 	useEffect(() => {
 		if (loaded || error) {
@@ -38,9 +41,12 @@ export default function RootLayout() {
 
 	return (
 		<ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-			<Stack initialRouteName='onboarding'>
+			<Stack initialRouteName={completed ? '(tabs)' : 'onboarding'}>
 				<Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-				<Stack.Screen name='onboarding' options={{ headerShown: false }} />
+				<Stack.Screen name='(auth)/login' options={{ headerShown: false }} />
+				{!completed && (
+					<Stack.Screen name='onboarding' options={{ headerShown: false }} />
+				)}
 				<Stack.Screen
 					name='modal'
 					options={{ presentation: 'modal', title: '', headerShown: false }}
