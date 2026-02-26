@@ -9,12 +9,7 @@ type IconProps = {
 	size?: number;
 };
 
-export default function icon({
-	name,
-	color,
-	size,
-	...props
-}: IconProps & SvgProps) {
+export function Icon({ name, color, size, ...props }: IconProps & SvgProps) {
 	const LucideIcon = (
 		icons as Record<
 			keyof typeof icons,
@@ -34,3 +29,5 @@ export default function icon({
 
 	return <LucideIcon color={color} size={size} {...props} strokeWidth={1.8} />;
 }
+
+export default Icon;

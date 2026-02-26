@@ -1,5 +1,5 @@
 import type { PropsWithChildren, ReactElement } from 'react';
-import { StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
 	interpolate,
 	useAnimatedRef,
@@ -7,23 +7,24 @@ import Animated, {
 	useScrollOffset,
 } from 'react-native-reanimated';
 
-import { ThemedView } from '@/components/themed-view';
+import Icon from '@/components/ui/icon';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { useRouter } from 'expo-router';
 
-const HEADER_HEIGHT = 250;
+const HEADER_HEIGHT = 350;
 
 type Props = PropsWithChildren<{
 	headerImage: ReactElement;
-	headerBackgroundColor: { dark: string; light: string };
+	headerBackgroundColor?: { dark: string; light: string };
 }>;
 
 export default function ParallaxScrollView({
 	children,
 	headerImage,
-	headerBackgroundColor,
+	headerBackgroundColor = { light: '#D0D0D0', dark: '#353636' },
 }: Props) {
-	const backgroundColor = useThemeColor({}, 'background');
+	const router = useRouter();
+
 	const colorScheme = useColorScheme() ?? 'light';
 	const scrollRef = useAnimatedRef<Animated.ScrollView>();
 	const scrollOffset = useScrollOffset(scrollRef);
@@ -49,37 +50,38 @@ export default function ParallaxScrollView({
 	});
 
 	return (
-		<Animated.ScrollView
-			ref={scrollRef}
-			style={{ backgroundColor, flex: 1 }}
-			scrollEventThrottle={16}
-		>
-			<Animated.View
-				style={[
-					styles.header,
-					{ backgroundColor: headerBackgroundColor[colorScheme] },
-					headerAnimatedStyle,
-				]}
+		<View className='flex-1'>
+			<Pressable
+				className='absolute top-16 left-3 p-2.5 z-50 rounded-full bg-background-light'
+				onPress={() => router.back()}
 			>
-				{headerImage}
-			</Animated.View>
-			<ThemedView style={styles.content}>{children}</ThemedView>
-		</Animated.ScrollView>
+				<Icon name='ArrowLeft' size={24} />
+			</Pressable>
+			<Animated.ScrollView
+				ref={scrollRef}
+				scrollEventThrottle={16}
+				className='bg-background-light flex-1 relative'
+			>
+				<Animated.View
+					style={[
+						styles.header,
+						{ backgroundColor: headerBackgroundColor[colorScheme] },
+						headerAnimatedStyle,
+					]}
+				>
+					{headerImage}
+				</Animated.View>
+				<View className='flex-1 gap-4 overflow-hidden p-6 rounded-tl-3xl rounded-tr-3xl -mt-4 bg-background-light'>
+					{children}
+				</View>
+			</Animated.ScrollView>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
 	header: {
 		height: HEADER_HEIGHT,
-		overflow: 'hidden',
-	},
-	content: {
-		flex: 1,
-		padding: 32,
-		gap: 16,
 		overflow: 'hidden',
 	},
 });

@@ -2,6 +2,7 @@ import SectionText from '@/components/section-text';
 import Icon from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
 import { PRODUCTS } from '@/data/products';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import {
 	FlatList,
@@ -13,6 +14,8 @@ import {
 } from 'react-native';
 
 export default function FeaturesProducts() {
+	const router = useRouter();
+
 	const renderProductItem = ({ item }: { item: (typeof PRODUCTS)[0] }) => {
 		return (
 			<View style={styles.categoryItemContainer}>
@@ -35,7 +38,7 @@ export default function FeaturesProducts() {
 						styles.productItem,
 						{ opacity: pressed ? 0.8 : 1 },
 					]}
-					onPress={() => {}}
+					onPress={() => router.push(`/products/${item.id}`)}
 				>
 					<Image
 						source={require('@/assets/images/products/peach.png')}
