@@ -1,22 +1,35 @@
 import Banners from '@/components/banners';
 import Categories from '@/components/categories';
-import FeaturedProducts from '@/components/features-products';
+import FeaturedProducts from '@/components/featured-products';
 import Search from '@/components/search';
 import { Colors } from '@/constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView, StatusBar, StyleSheet } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
 	return (
 		<SafeAreaProvider>
-			<SafeAreaView style={styles.container} edges={['top']}>
-				<ScrollView style={styles.scrollView}>
-					<Search />
-					<Banners />
-					<Categories />
-					<FeaturedProducts />
-				</ScrollView>
-			</SafeAreaView>
+			<LinearGradient
+				colors={[
+					Colors.light.background,
+					Colors.light.background,
+					Colors.light.backgroundLight,
+				]}
+				locations={[0, 0.54, 0.78]}
+				start={{ y: 0, x: 0.5 }}
+				end={{ y: 1, x: 0.5 }}
+				style={{ flex: 1 }}
+			>
+				<SafeAreaView style={styles.container} edges={['top']}>
+					<ScrollView style={styles.scrollView}>
+						<Search />
+						<Banners />
+						<Categories />
+						<FeaturedProducts />
+					</ScrollView>
+				</SafeAreaView>
+			</LinearGradient>
 		</SafeAreaProvider>
 	);
 }
@@ -25,10 +38,11 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingTop: StatusBar.currentHeight,
-		paddingHorizontal: 16,
-		backgroundColor: Colors.light.background,
+		// backgroundColor: Colors.light.backgroundLight,
 	},
-	scrollView: {},
+	scrollView: {
+		paddingHorizontal: 16,
+	},
 	titleContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',

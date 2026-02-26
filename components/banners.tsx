@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
 
 export default function Banners() {
 	return (
@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
 	},
 	banner: {
 		height: 240,
+		width: Dimensions.get('window').width - 32,
 	},
 	bannerText: {
 		position: 'absolute',

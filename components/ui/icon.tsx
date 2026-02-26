@@ -1,5 +1,7 @@
 import * as icons from 'lucide-react-native/icons';
 import React from 'react';
+import { ColorValue } from 'react-native';
+import { SvgProps } from 'react-native-svg';
 
 type IconProps = {
 	name: keyof typeof icons;
@@ -7,7 +9,12 @@ type IconProps = {
 	size?: number;
 };
 
-export default function icon({ name, color, size }: IconProps) {
+export default function icon({
+	name,
+	color,
+	size,
+	...props
+}: IconProps & SvgProps) {
 	const LucideIcon = (
 		icons as Record<
 			keyof typeof icons,
@@ -15,6 +22,8 @@ export default function icon({ name, color, size }: IconProps) {
 				color?: string;
 				size?: number;
 				strokeWidth?: number;
+				fill?: ColorValue;
+				stroke?: ColorValue;
 			}>
 		>
 	)[name];
@@ -23,5 +32,5 @@ export default function icon({ name, color, size }: IconProps) {
 		throw new Error(`Icon ${name} not found`);
 	}
 
-	return <LucideIcon color={color} size={size} strokeWidth={1.8} />;
+	return <LucideIcon color={color} size={size} {...props} strokeWidth={1.8} />;
 }

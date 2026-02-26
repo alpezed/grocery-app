@@ -23,6 +23,9 @@ export const Colors = {
 		primaryLight: '#EBFFD7',
 		border: '#EBEBEB',
 		link: '#407EC7',
+		heart: '#FE585A',
+		badgeText: '#E8AD41',
+		badgeBg: '#FDEFD5',
 	},
 	dark: {
 		text: '#868889',
@@ -38,6 +41,9 @@ export const Colors = {
 		primaryLight: '#EBFFD7',
 		border: '#EBEBEB',
 		link: '#407EC7',
+		heart: '#FE585A',
+		badgeText: '#E8AD41',
+		badgeBg: '#FDEFD5',
 	},
 };
 
