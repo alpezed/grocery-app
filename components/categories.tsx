@@ -1,4 +1,4 @@
-import Icon from '@/components/ui/icon';
+import SectionText from '@/components/section-text';
 import { Colors } from '@/constants/theme';
 import { PRODUCT_CATEGORIES } from '@/data/categories';
 import { FlashList } from '@shopify/flash-list';
@@ -32,17 +32,12 @@ export default function Categories() {
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.categoriesHeader}>
-				<Text style={styles.categoriesHeaderText}>Categories</Text>
-				<Pressable
-					style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-					onPress={() => {
-						console.log('All categories');
-					}}
-				>
-					<Icon name='ChevronRight' size={22} color={Colors.light.text} />
-				</Pressable>
-			</View>
+			<SectionText
+				title='Categories'
+				onPress={() => {
+					console.log('All categories');
+				}}
+			/>
 			<FlashList
 				data={PRODUCT_CATEGORIES}
 				horizontal
@@ -80,15 +75,5 @@ const styles = StyleSheet.create({
 		fontFamily: 'Montserrat-SemiBold',
 		color: Colors.light.text,
 		textAlign: 'center',
-	},
-	categoriesHeader: {
-		paddingBottom: 15,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-	categoriesHeaderText: {
-		fontSize: 18,
-		fontFamily: 'Montserrat-SemiBold',
 	},
 });
