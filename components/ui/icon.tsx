@@ -23,5 +23,5 @@ export default function icon({ name, color, size }: IconProps) {
 		throw new Error(`Icon ${name} not found`);
 	}
 
-	return <LucideIcon color={color} size={size} strokeWidth={1.5} />;
+	return <LucideIcon color={color} size={size} strokeWidth={1.8} />;
 }

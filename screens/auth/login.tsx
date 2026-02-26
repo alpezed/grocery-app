@@ -60,7 +60,7 @@ export default function LoginScreen() {
 					<Text style={styles.forgotPasswordText}>Forgot password</Text>
 				</Pressable>
 			</View>
-			<Button onPress={() => {}}>Login</Button>
+			<Button onPress={() => router.push('/(tabs)')}>Login</Button>
 			<View style={styles.linkContainer}>
 				<View style={styles.linkTextContainer}>
 					<Text style={styles.linkText}>Don&apos;t have an account?</Text>
