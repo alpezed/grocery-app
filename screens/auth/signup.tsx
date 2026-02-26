@@ -24,6 +24,7 @@ export default function SignUpScreen() {
 				<Input
 					icon={<Icon name='Phone' size={24} color={Colors.light.text} />}
 					placeholder='Phone number'
+					type='phone'
 				/>
 				<Input
 					type='password'
