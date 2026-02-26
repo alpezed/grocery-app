@@ -2,36 +2,52 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import Icon from '@/components/ui/icon';
 
 export default function TabLayout() {
-	const colorScheme = useColorScheme();
-
 	return (
 		<Tabs
 			screenOptions={{
-				tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+				tabBarActiveTintColor: 'black',
 				headerShown: false,
 				tabBarButton: HapticTab,
+				tabBarLabel: '',
+				tabBarStyle: {
+					paddingTop: 15,
+					paddingBottom: 0,
+					height: 75,
+				},
 			}}
 		>
 			<Tabs.Screen
 				name='index'
 				options={{
-					title: 'Home',
 					tabBarIcon: ({ color }) => (
-						<IconSymbol size={28} name='house.fill' color={color} />
+						<Icon name='House' size={28} color={color} />
 					),
 				}}
 			/>
 			<Tabs.Screen
-				name='explore'
+				name='profile'
 				options={{
-					title: 'Explore',
 					tabBarIcon: ({ color }) => (
-						<IconSymbol size={28} name='paperplane.fill' color={color} />
+						<Icon name='CircleUser' size={28} color={color} />
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name='favorites'
+				options={{
+					tabBarIcon: ({ color }) => (
+						<Icon name='Heart' size={28} color={color} />
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name='orders'
+				options={{
+					tabBarIcon: ({ color }) => (
+						<Icon name='ShoppingBag' size={28} color={color} />
 					),
 				}}
 			/>

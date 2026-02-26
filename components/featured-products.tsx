@@ -57,7 +57,7 @@ export default function FeaturesProducts() {
 					]}
 				>
 					<Icon name='ShoppingBag' size={14} color={Colors.light.primaryDark} />
-					<Text style={styles.addToCartText}>Add to card</Text>
+					<Text style={styles.addToCartText}>Add to cart</Text>
 				</Pressable>
 			</View>
 		);
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
 	},
 	addToCartText: {
 		fontSize: 12,
-		fontFamily: 'Montserrat',
+		fontFamily: 'Montserrat-SemiBold',
 		textAlign: 'center',
 	},
 	favoriteButton: {
