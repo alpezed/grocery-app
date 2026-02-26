@@ -9,7 +9,11 @@ export default function Search() {
 			<View style={styles.iconContainer}>
 				<Icon name='Search' size={20} color={Colors.light.text} />
 			</View>
-			<TextInput placeholder='Search products...' style={styles.input} />
+			<TextInput
+				placeholder='Search products...'
+				placeholderTextColor={Colors.light.text}
+				style={styles.input}
+			/>
 			<Pressable
 				onPress={() => Alert.alert('Filter settings')}
 				style={({ pressed }) => [

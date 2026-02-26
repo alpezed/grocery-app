@@ -4,12 +4,13 @@ import FeaturedProducts from '@/components/featured-products';
 import Search from '@/components/search';
 import { Colors } from '@/constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ScrollView, StatusBar, StyleSheet } from 'react-native';
+import { ScrollView, StatusBar, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
 	return (
 		<SafeAreaProvider>
+			<StatusBar barStyle='dark-content' />
 			<LinearGradient
 				colors={[
 					Colors.light.background,
@@ -23,10 +24,12 @@ export default function HomeScreen() {
 			>
 				<SafeAreaView style={styles.container} edges={['top']}>
 					<ScrollView style={styles.scrollView}>
-						<Search />
-						<Banners />
-						<Categories />
-						<FeaturedProducts />
+						<View style={{ gap: 10 }}>
+							<Search />
+							<Banners />
+							<Categories />
+							<FeaturedProducts />
+						</View>
 					</ScrollView>
 				</SafeAreaView>
 			</LinearGradient>
@@ -38,7 +41,6 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingTop: StatusBar.currentHeight,
-		// backgroundColor: Colors.light.backgroundLight,
 	},
 	scrollView: {
 		paddingHorizontal: 16,
