@@ -1,4 +1,4 @@
-import Icon from '@/components/ui/icon';
+import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
 import React from 'react';
 import { Alert, Pressable, StyleSheet, TextInput, View } from 'react-native';

@@ -7,7 +7,7 @@ import Animated, {
 	useScrollOffset,
 } from 'react-native-reanimated';
 
-import Icon from '@/components/ui/icon';
+import { Icon } from '@/components/ui/icon';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useRouter } from 'expo-router';
 

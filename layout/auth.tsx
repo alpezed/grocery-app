@@ -1,4 +1,4 @@
-import Icon from '@/components/ui/icon';
+import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
 import { useRouter } from 'expo-router';
 import React from 'react';

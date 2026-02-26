@@ -1,5 +1,5 @@
 import SectionText from '@/components/section-text';
-import Icon from '@/components/ui/icon';
+import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
 import { PRODUCTS } from '@/data/products';
 import { useRouter } from 'expo-router';

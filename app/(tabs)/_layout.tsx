@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
-import Icon from '@/components/ui/icon';
+import { Icon } from '@/components/ui/icon';
 
 export default function TabLayout() {
 	return (

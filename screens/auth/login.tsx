@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import Icon from '@/components/ui/icon';
+import { Icon } from '@/components/ui/icon';
 import Input from '@/components/ui/input';
 import { Colors } from '@/constants/theme';
 import AuthLayout from '@/layout/auth';
