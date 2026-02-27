@@ -27,7 +27,6 @@ export default function ProductDetail() {
 						stroke={false ? Colors.light.heart : Colors.light.text}
 					/>
 				</Pressable>
-
 				<Text className='text-primary-dark font-sans-medium'>$2.22</Text>
 				<Text className='font-sans-medium text-xl text-gray-900'>
 					Organic Lemons

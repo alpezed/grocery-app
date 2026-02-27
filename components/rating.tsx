@@ -1,9 +1,11 @@
 import { Colors } from '@/constants/theme';
 import { Rating } from '@kolking/react-native-rating';
+import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 export default function Ratings() {
+	const router = useRouter();
 	const [rating, setRating] = useState(0);
 
 	const handleChange = useCallback(
@@ -22,7 +24,9 @@ export default function Ratings() {
 				variant='stars-outline'
 				baseColor={Colors.light.rating}
 			/>
-			<Text className='text-text font-sans text-sm'>(89 reviews)</Text>
+			<Pressable onPress={() => router.push('/reviews')}>
+				<Text className='text-text font-sans text-sm'>(89 reviews)</Text>
+			</Pressable>
 		</View>
 	);
 }
