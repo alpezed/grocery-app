@@ -24,7 +24,10 @@ export default function Ratings() {
 				variant='stars-outline'
 				baseColor={Colors.light.rating}
 			/>
-			<Pressable onPress={() => router.push('/reviews')}>
+			<Pressable
+				style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
+				onPress={() => router.push('/reviews')}
+			>
 				<Text className='text-text font-sans text-sm'>(89 reviews)</Text>
 			</Pressable>
 		</View>
