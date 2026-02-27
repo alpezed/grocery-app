@@ -21,16 +21,22 @@ export default function AuthLayout({
 	subtitle,
 	bgImage,
 	children,
+	onBackPress,
 }: {
 	bgImage?: ImageSourcePropType;
 	title?: string;
 	subtitle?: string;
 	children: React.ReactNode;
+	onBackPress?: () => void;
 }) {
 	const router = useRouter();
 
 	const handleBack = () => {
-		router.back();
+		if (onBackPress) {
+			onBackPress();
+		} else {
+			router.back();
+		}
 	};
 
 	return (

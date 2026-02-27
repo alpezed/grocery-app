@@ -19,3 +19,8 @@ export const useOnboardingStore = create(
 		}
 	)
 );
+
+export const resetOnboardingStore = async () => {
+	await useOnboardingStore.persist.clearStorage();
+	useOnboardingStore.setState({ completed: false });
+};

@@ -1,8 +1,10 @@
+import BuyGroceryIcon from '@/assets/images/onboarding/buy-grocery.svg';
+import FastDeliveryIcon from '@/assets/images/onboarding/fast-delivery.svg';
+import EnjoyQualityFoodIcon from '@/assets/images/onboarding/quality-food.svg';
 import { Colors } from '@/constants/theme';
 import { useOnboardingStore } from '@/store/use-onboarding';
 import { FlashList } from '@shopify/flash-list';
 import type { ViewabilityConfigCallbackPairs } from '@shopify/flash-list/dist/FlashListProps';
-import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
@@ -21,21 +23,21 @@ const onboardingData = [
 		title: 'Buy Grocery',
 		description:
 			'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy',
-		imagePath: require('@/assets/images/onboard-img-3-1.png'),
+		icon: BuyGroceryIcon,
 	},
 	{
 		id: 2,
 		title: 'Fast Delivery',
 		description:
 			'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy',
-		imagePath: require('@/assets/images/onboard-img-3-2.png'),
+		icon: FastDeliveryIcon,
 	},
 	{
 		id: 3,
 		title: 'Enjoy Quality Food',
 		description:
 			'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy',
-		imagePath: require('@/assets/images/onboard-img-3-3.png'),
+		icon: EnjoyQualityFoodIcon,
 	},
 ];
 
@@ -63,6 +65,11 @@ export default function Onboarding() {
 		ViewabilityConfigCallbackPairs<(typeof onboardingData)[0]> | undefined
 	>([{ onViewableItemsChanged, viewabilityConfig }]);
 
+	const onSkipOnboarding = () => {
+		router.replace('/(auth)');
+		useOnboardingStore.getState().complete();
+	};
+
 	const scrollToNextItem = () => {
 		// Check if there is a next item
 		if (currentIndex < onboardingData.length - 1) {
@@ -73,14 +80,8 @@ export default function Onboarding() {
 				animated: true,
 			});
 		} else {
-			router.push('/(auth)/login');
-			useOnboardingStore.getState().complete();
+			onSkipOnboarding();
 		}
-	};
-
-	const onSkipOnboarding = () => {
-		router.push('/(auth)/login');
-		useOnboardingStore.getState().complete();
 	};
 
 	const renderOnboardingItem = ({
@@ -91,7 +92,7 @@ export default function Onboarding() {
 		return (
 			<View style={styles.item}>
 				<View style={styles.imageContainer}>
-					<Image source={item.imagePath} style={styles.image} />
+					<item.icon />
 				</View>
 				<View style={styles.titleContainer}>
 					<Text style={styles.title}>{item.title}</Text>

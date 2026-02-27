@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
 import AuthLayout from '@/layout/auth';
+import { resetOnboardingStore } from '@/store/use-onboarding';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
@@ -15,6 +16,10 @@ export default function AuthOnboardingScreen() {
 			title='Welcome'
 			subtitle='Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy'
 			bgImage={require('@/assets/images/auth-onboarding-img.png')}
+			onBackPress={async () => {
+				await resetOnboardingStore();
+				router.replace('/onboarding');
+			}}
 		>
 			<View style={styles.buttonContainer}>
 				<Button

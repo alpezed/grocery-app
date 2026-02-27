@@ -41,6 +41,7 @@ export default function RootLayout() {
 			<Stack
 				initialRouteName={completed ? '(auth)/index' : 'onboarding'}
 				screenOptions={{
+					headerShown: false,
 					headerShadowVisible: false,
 					header: props => (
 						<AppHeader
@@ -54,15 +55,14 @@ export default function RootLayout() {
 					},
 				}}
 			>
-				<Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-				<Stack.Screen name='(auth)/index' options={{ headerShown: false }} />
-				<Stack.Screen name='(auth)/login' options={{ headerShown: false }} />
-				<Stack.Screen name='(auth)/signup' options={{ headerShown: false }} />
+				<Stack.Screen name='(tabs)' />
+				<Stack.Screen name='(auth)/index' />
+				<Stack.Screen name='(auth)/login' />
+				<Stack.Screen name='(auth)/signup' />
 				<Stack.Screen
 					name='reviews/index'
 					options={{
 						title: 'Reviews',
-						headerShown: false,
 					}}
 				/>
 				<Stack.Screen
@@ -73,9 +73,7 @@ export default function RootLayout() {
 					name='products/[productId]'
 					options={{ headerShown: false }}
 				/>
-				{!completed && (
-					<Stack.Screen name='onboarding' options={{ headerShown: false }} />
-				)}
+				{!completed && <Stack.Screen name='onboarding' />}
 			</Stack>
 		</ThemeProvider>
 	);
