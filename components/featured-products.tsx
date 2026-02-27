@@ -40,18 +40,17 @@ export default function FeaturesProducts() {
 					]}
 					onPress={() => router.push(`/products/${item.id}`)}
 				>
-					<Image
-						source={require('@/assets/images/products/peach.png')}
-						style={styles.productItemImage}
-					/>
-					<Text style={styles.productPrice}>
-						{item.price.toLocaleString('en-US', {
-							style: 'currency',
-							currency: 'USD',
-						})}
-					</Text>
-					<Text style={styles.productItemText}>{item.name}</Text>
-					<Text style={styles.productUnit}>{item.unit}</Text>
+					<Image source={item.image} style={styles.productItemImage} />
+					<View className='py-2'>
+						<Text style={styles.productPrice}>
+							{item.price.toLocaleString('en-US', {
+								style: 'currency',
+								currency: 'USD',
+							})}
+						</Text>
+						<Text style={styles.productItemText}>{item.name}</Text>
+						<Text style={styles.productUnit}>{item.unit}</Text>
+					</View>
 				</Pressable>
 				<Pressable
 					style={({ pressed }) => [
@@ -114,17 +113,15 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 	productItemImage: {
-		paddingVertical: 10,
-		height: 130,
+		height: 140,
 		width: '100%',
-		resizeMode: 'contain',
+		resizeMode: 'cover',
 	},
 	productUnit: {
 		fontSize: 12,
 		fontFamily: 'Montserrat',
 		textAlign: 'center',
 		color: Colors.light.text,
-		marginBottom: 10,
 	},
 	addToCartContainer: {
 		flexDirection: 'row',
