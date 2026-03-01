@@ -3,13 +3,75 @@ import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
 import AuthLayout from '@/layout/auth';
 import { resetOnboardingStore } from '@/store/use-onboarding';
+import { useSSO } from '@clerk/clerk-expo';
+import * as AuthSession from 'expo-auth-session';
 import { useRouter } from 'expo-router';
-import React from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
+import React, { useCallback, useEffect } from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
+export const useWarmUpBrowser = () => {
+	useEffect(() => {
+		if (Platform.OS !== 'android') return;
+		void WebBrowser.warmUpAsync();
+		return () => {
+			// Cleanup: closes browser when component unmounts
+			void WebBrowser.coolDownAsync();
+		};
+	}, []);
+};
+
+// Handle any pending authentication sessions
+WebBrowser.maybeCompleteAuthSession();
+
 export default function AuthOnboardingScreen() {
+	useWarmUpBrowser();
+
 	const router = useRouter();
+
+	// Use the `useSSO()` hook to access the `startSSOFlow()` method
+	const { startSSOFlow } = useSSO();
+
+	const onPressGoogle = useCallback(async () => {
+		try {
+			// Start the authentication process by calling `startSSOFlow()`
+			const { createdSessionId, setActive, signIn, signUp } =
+				await startSSOFlow({
+					strategy: 'oauth_google',
+					// For web, defaults to current path
+					// For native, you must pass a scheme, like AuthSession.makeRedirectUri({ scheme, path })
+					// For more info, see https://docs.expo.dev/versions/latest/sdk/auth-session/#authsessionmakeredirecturioptions
+					redirectUrl: AuthSession.makeRedirectUri(),
+				});
+
+			// If sign in was successful, set the active session
+			if (createdSessionId) {
+				setActive!({
+					session: createdSessionId,
+					// Check for session tasks and navigate to custom UI to help users resolve them
+					// See https://clerk.com/docs/guides/development/custom-flows/authentication/session-tasks
+					navigate: async ({ session }) => {
+						if (session?.currentTask) {
+							console.log(session?.currentTask);
+							router.push('/(auth)');
+							return;
+						}
+
+						router.push('/(auth)');
+					},
+				});
+			} else {
+				// If there is no `createdSessionId`,
+				// there are missing requirements, such as MFA
+				// See https://clerk.com/docs/guides/development/custom-flows/authentication/oauth-connections#handle-missing-requirements
+			}
+		} catch (err) {
+			// See https://clerk.com/docs/guides/development/custom-flows/error-handling
+			// for more info on error handling
+			console.error(JSON.stringify(err, null, 2));
+		}
+	}, [router, startSSOFlow]);
 
 	return (
 		<AuthLayout
@@ -24,7 +86,7 @@ export default function AuthOnboardingScreen() {
 			<View style={styles.buttonContainer}>
 				<Button
 					color='white'
-					onPress={() => Alert.alert('Google login is not available yet')}
+					onPress={onPressGoogle}
 					icon={
 						<Svg width='22' height='22' viewBox='0 0 22 22' fill='none'>
 							<Path

@@ -3,11 +3,15 @@ import Categories from '@/components/categories';
 import FeaturedProducts from '@/components/featured-products';
 import Search from '@/components/search';
 import { Colors } from '@/constants/theme';
+import { useUser } from '@clerk/clerk-expo';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView, StatusBar, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
+	const user = useUser();
+	console.log('user0', user);
+
 	return (
 		<SafeAreaProvider>
 			<StatusBar barStyle='dark-content' />

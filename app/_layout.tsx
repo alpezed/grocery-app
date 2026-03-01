@@ -1,3 +1,5 @@
+import { ClerkProvider } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -38,43 +40,42 @@ export default function RootLayout() {
 
 	return (
 		<ThemeProvider value={DefaultTheme}>
-			<Stack
-				initialRouteName={completed ? '(auth)/index' : 'onboarding'}
-				screenOptions={{
-					headerShown: false,
-					headerShadowVisible: false,
-					header: props => (
-						<AppHeader
-							title={props.options.title as string}
-							showBack={props.options.headerBackVisible as boolean}
-							headerRight={props.options.headerRight}
-						/>
-					),
-					contentStyle: {
-						backgroundColor: Colors.light.backgroundLight,
-					},
-				}}
-			>
-				<Stack.Screen name='(tabs)' />
-				<Stack.Screen name='(auth)/index' />
-				<Stack.Screen name='(auth)/login' />
-				<Stack.Screen name='(auth)/signup' />
-				<Stack.Screen
-					name='reviews/index'
-					options={{
-						title: 'Reviews',
+			<ClerkProvider tokenCache={tokenCache}>
+				<Stack
+					screenOptions={{
+						headerShown: false,
+						headerShadowVisible: false,
+						header: props => (
+							<AppHeader
+								title={props.options.title as string}
+								showBack={props.options.headerBackVisible as boolean}
+								headerRight={props.options.headerRight}
+							/>
+						),
+						contentStyle: {
+							backgroundColor: Colors.light.backgroundLight,
+						},
 					}}
-				/>
-				<Stack.Screen
-					name='reviews/create'
-					options={{ headerShown: true, title: 'Create Review' }}
-				/>
-				<Stack.Screen
-					name='products/[productId]'
-					options={{ headerShown: false }}
-				/>
-				{!completed && <Stack.Screen name='onboarding' />}
-			</Stack>
+				>
+					<Stack.Screen name='(tabs)' />
+					<Stack.Screen name='(auth)' />
+					<Stack.Screen
+						name='reviews/index'
+						options={{
+							title: 'Reviews',
+						}}
+					/>
+					<Stack.Screen
+						name='reviews/create'
+						options={{ headerShown: false, title: 'Create Review' }}
+					/>
+					<Stack.Screen
+						name='products/[productId]'
+						options={{ headerShown: false }}
+					/>
+					{!completed && <Stack.Screen name='onboarding' />}
+				</Stack>
+			</ClerkProvider>
 		</ThemeProvider>
 	);
 }
