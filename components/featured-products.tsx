@@ -1,10 +1,12 @@
 import SectionText from '@/components/section-text';
 import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
-import { PRODUCTS } from '@/data/products';
+import { useProducts } from '@/lib/queries/products';
+import { Product } from '@/schema/product.schema';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
+	ActivityIndicator,
 	FlatList,
 	Image,
 	Pressable,
@@ -15,16 +17,17 @@ import {
 
 export default function FeaturesProducts() {
 	const router = useRouter();
+	const { data, isLoading, error, status } = useProducts();
 
-	const renderProductItem = ({ item }: { item: (typeof PRODUCTS)[0] }) => {
+	const renderProductItem = ({ item }: { item: Product }) => {
 		return (
 			<View style={styles.categoryItemContainer}>
-				{item.isNew && (
+				{/* {item.isNew && (
 					<View style={styles.newBadge}>
 						<Text style={styles.newBadgeText}>New</Text>
 					</View>
-				)}
-				<Pressable style={styles.favoriteButton}>
+				)} */}
+				{/* <Pressable style={styles.favoriteButton}>
 					<Icon
 						name='Heart'
 						size={16}
@@ -32,13 +35,13 @@ export default function FeaturesProducts() {
 						fill={item.isFavorite ? Colors.light.heart : 'none'}
 						stroke={item.isFavorite ? Colors.light.heart : Colors.light.text}
 					/>
-				</Pressable>
+				</Pressable> */}
 				<Pressable
 					style={({ pressed }) => [
 						styles.productItem,
 						{ opacity: pressed ? 0.8 : 1 },
 					]}
-					onPress={() => router.push(`/products/${item.id}`)}
+					onPress={() => router.push(`/products/${item.documentId}`)}
 				>
 					<Image source={item.image} style={styles.productItemImage} />
 					<View className='py-2'>
@@ -65,6 +68,10 @@ export default function FeaturesProducts() {
 		);
 	};
 
+	if (error) {
+		return <Text className='text-red-500'>Error: {error.message}</Text>;
+	}
+
 	return (
 		<View style={styles.container}>
 			<SectionText
@@ -73,14 +80,21 @@ export default function FeaturesProducts() {
 					console.log('All categories');
 				}}
 			/>
-			<FlatList
-				data={PRODUCTS}
-				numColumns={2}
-				keyExtractor={item => item.id.toString()}
-				renderItem={renderProductItem}
-				scrollEnabled={false}
-				columnWrapperStyle={{ gap: 10, justifyContent: 'space-between' }}
-			/>
+			{isLoading && (
+				<View className='flex-1 items-center justify-center py-18'>
+					<ActivityIndicator size='small' color={Colors.light.primaryDark} />
+				</View>
+			)}
+			{status === 'success' && (
+				<FlatList
+					data={data}
+					numColumns={2}
+					keyExtractor={item => item.documentId}
+					renderItem={renderProductItem}
+					scrollEnabled={false}
+					columnWrapperStyle={{ gap: 10, justifyContent: 'space-between' }}
+				/>
+			)}
 		</View>
 	);
 }

@@ -4,7 +4,7 @@ import {
 	VerifyCodeSchema,
 	verifyCodeSchema,
 } from '@/schema/verify-code.schema';
-import StrapiService from '@/services/strapi';
+import { strapiService } from '@/services/strapi';
 import { isClerkAPIResponseError, useSignUp } from '@clerk/clerk-expo';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocalSearchParams } from 'expo-router';
@@ -24,8 +24,6 @@ import {
 } from 'react-native';
 
 const length = 6;
-
-const strapiService = new StrapiService();
 
 export function VerifyEmailScreen() {
 	const [otp, setOtp] = useState(new Array(length).fill(''));

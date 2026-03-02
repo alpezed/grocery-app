@@ -12,6 +12,7 @@ import '../global.css';
 import AppHeader from '@/components/app-header';
 import { Colors } from '@/constants/theme';
 import { useOnboardingStore } from '@/store/use-onboarding';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ActivityIndicator } from 'react-native';
 
 export const unstable_settings = {
@@ -19,6 +20,8 @@ export const unstable_settings = {
 };
 
 SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
 	// const colorScheme = useColorScheme();
@@ -42,40 +45,42 @@ export default function RootLayout() {
 	return (
 		<ThemeProvider value={DefaultTheme}>
 			<ClerkProvider tokenCache={tokenCache}>
-				<Stack
-					screenOptions={{
-						headerShown: false,
-						headerShadowVisible: false,
-						header: props => (
-							<AppHeader
-								title={props.options.title as string}
-								showBack={props.options.headerBackVisible as boolean}
-								headerRight={props.options.headerRight}
-							/>
-						),
-						contentStyle: {
-							backgroundColor: Colors.light.backgroundLight,
-						},
-					}}
-				>
-					<Stack.Screen name='(tabs)' />
-					<Stack.Screen name='(auth)' />
-					<Stack.Screen
-						name='reviews/index'
-						options={{
-							title: 'Reviews',
+				<QueryClientProvider client={queryClient}>
+					<Stack
+						screenOptions={{
+							headerShown: false,
+							headerShadowVisible: false,
+							header: props => (
+								<AppHeader
+									title={props.options.title as string}
+									showBack={props.options.headerBackVisible as boolean}
+									headerRight={props.options.headerRight}
+								/>
+							),
+							contentStyle: {
+								backgroundColor: Colors.light.backgroundLight,
+							},
 						}}
-					/>
-					<Stack.Screen
-						name='reviews/create'
-						options={{ headerShown: false, title: 'Create Review' }}
-					/>
-					<Stack.Screen
-						name='products/[productId]'
-						options={{ headerShown: false }}
-					/>
-					{!completed && <Stack.Screen name='onboarding' />}
-				</Stack>
+					>
+						<Stack.Screen name='(tabs)' />
+						<Stack.Screen name='(auth)' />
+						<Stack.Screen
+							name='reviews/index'
+							options={{
+								title: 'Reviews',
+							}}
+						/>
+						<Stack.Screen
+							name='reviews/create'
+							options={{ headerShown: false, title: 'Create Review' }}
+						/>
+						<Stack.Screen
+							name='products/[productId]'
+							options={{ headerShown: false }}
+						/>
+						{!completed && <Stack.Screen name='onboarding' />}
+					</Stack>
+				</QueryClientProvider>
 			</ClerkProvider>
 		</ThemeProvider>
 	);
