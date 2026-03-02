@@ -69,7 +69,9 @@ export default function ProfileScreen() {
 					source={{ uri: user?.imageUrl }}
 					className='w-28 h-28 rounded-full mb-2'
 				/>
-				<Text className='text-base font-sans-medium'>{user?.fullName}</Text>
+				<Text className='text-base font-sans-medium'>
+					{user?.fullName ?? user?.username}
+				</Text>
 				<Text className='text-xs text-gray-500 font-sans'>
 					{user?.emailAddresses[0].emailAddress}
 				</Text>

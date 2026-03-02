@@ -35,6 +35,7 @@ export default function SignUpScreen() {
 		// Start sign-up process using the phone number provided
 		try {
 			await signUp.create({
+				username: data.email.split('@')[0],
 				emailAddress: data.email,
 				password: data.password,
 			});
@@ -49,6 +50,8 @@ export default function SignUpScreen() {
 				pathname: '/(auth)/verify-email',
 				params: {
 					phone: data.phone,
+					email: data.email,
+					password: data.password,
 				},
 			});
 		} catch (err) {

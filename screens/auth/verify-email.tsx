@@ -4,9 +4,10 @@ import {
 	VerifyCodeSchema,
 	verifyCodeSchema,
 } from '@/schema/verify-code.schema';
+import StrapiService from '@/services/strapi';
 import { isClerkAPIResponseError, useSignUp } from '@clerk/clerk-expo';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { useController, useForm } from 'react-hook-form';
 import {
@@ -24,11 +25,18 @@ import {
 
 const length = 6;
 
+const strapiService = new StrapiService();
+
 export function VerifyEmailScreen() {
 	const [otp, setOtp] = useState(new Array(length).fill(''));
 	const inputs = useRef<TextInput[]>([]);
 	const { isLoaded, signUp, setActive } = useSignUp();
-	const router = useRouter();
+
+	const { email, password } = useLocalSearchParams<{
+		email: string;
+		password: string;
+	}>();
+
 	const {
 		control,
 		handleSubmit,
@@ -149,7 +157,12 @@ export function VerifyEmailScreen() {
 							return;
 						}
 
-						router.replace('/');
+						await strapiService.createUser({
+							email: email ?? '',
+							password: password,
+							username: email ?? '',
+							clerkId: session?.user?.id ?? '',
+						});
 					},
 				});
 			} else {

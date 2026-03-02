@@ -12,6 +12,7 @@ import '../global.css';
 import AppHeader from '@/components/app-header';
 import { Colors } from '@/constants/theme';
 import { useOnboardingStore } from '@/store/use-onboarding';
+import { ActivityIndicator } from 'react-native';
 
 export const unstable_settings = {
 	anchor: '(tabs)',
@@ -21,7 +22,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 	// const colorScheme = useColorScheme();
-	const [loaded, error] = useFonts({
+	const [loaded] = useFonts({
 		Montserrat: require('@/assets/fonts/Montserrat-Regular.ttf'),
 		'Montserrat-SemiBold': require('@/assets/fonts/Montserrat-SemiBold.ttf'),
 		'Montserrat-Bold': require('@/assets/fonts/Montserrat-Bold.ttf'),
@@ -29,14 +30,14 @@ export default function RootLayout() {
 	const completed = useOnboardingStore(state => state.completed);
 
 	useEffect(() => {
-		if (loaded || error) {
+		if (loaded) {
 			SplashScreen.hideAsync();
 		}
-	}, [loaded, error]);
+	}, [loaded]);
 
-	// if (!loaded && !error) {
-	// 	return null;
-	// }
+	if (!loaded) {
+		return <ActivityIndicator />;
+	}
 
 	return (
 		<ThemeProvider value={DefaultTheme}>
