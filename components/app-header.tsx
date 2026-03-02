@@ -38,7 +38,7 @@ export default function AppHeader({
 							style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
 							className='p-1'
 						>
-							<Icon name='ArrowLeft' size={22} />
+							<Icon name='ArrowLeft' size={22} color='black' />
 						</Pressable>
 					)}
 				</View>

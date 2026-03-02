@@ -2,10 +2,13 @@ import SectionText from '@/components/section-text';
 import { Colors } from '@/constants/theme';
 import { PRODUCT_CATEGORIES } from '@/data/categories';
 import { FlashList } from '@shopify/flash-list';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function Categories() {
+	const router = useRouter();
+
 	const renderCategoryItem = ({
 		item,
 	}: {
@@ -19,9 +22,7 @@ export default function Categories() {
 						{ backgroundColor: item.color.background },
 						{ opacity: pressed ? 0.8 : 1 },
 					]}
-					onPress={() => {
-						console.log('item.label', item.label);
-					}}
+					onPress={() => router.push(`/(products)/categories`)}
 				>
 					<item.icon width={20} height={20} color={item.color.primary} />
 				</Pressable>
@@ -34,14 +35,11 @@ export default function Categories() {
 		<View style={styles.container}>
 			<SectionText
 				title='Categories'
-				onPress={() => {
-					console.log('All categories');
-				}}
+				onPress={() => router.push('/(products)/categories')}
 			/>
 			<FlashList
 				data={PRODUCT_CATEGORIES}
 				horizontal
-				pagingEnabled
 				showsHorizontalScrollIndicator={false}
 				initialScrollIndex={0}
 				keyExtractor={item => item.id.toString()}
