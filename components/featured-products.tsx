@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 		borderRadius: 100,
 		padding: 5,
+		zIndex: 1,
 	},
 	newBadge: {
 		position: 'absolute',
@@ -153,6 +154,7 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.light.badgeBg,
 		paddingHorizontal: 8,
 		paddingVertical: 4,
+		zIndex: 1,
 	},
 	newBadgeText: {
 		fontSize: 10,
