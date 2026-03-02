@@ -5,10 +5,12 @@ import { StyleSheet, TextInput, View } from 'react-native';
 export default function Input({
 	icon,
 	type = 'text',
+	error,
 	...props
 }: ComponentProps<typeof TextInput> & {
-	icon: ReactNode;
+	icon?: ReactNode;
 	type?: 'text' | 'password' | 'phone';
+	error?: boolean;
 }) {
 	const [phoneNumber, setPhoneNumber] = useState('');
 
@@ -40,6 +42,7 @@ export default function Input({
 	const handleChangeText = (text: string) => {
 		const formatted = formatPhoneNumber(text);
 		setPhoneNumber(formatted);
+		props.onChangeText?.(formatted);
 	};
 
 	return (
@@ -55,6 +58,7 @@ export default function Input({
 				textContentType={type === 'phone' ? 'telephoneNumber' : 'none'}
 				value={type === 'phone' ? phoneNumber : props.value}
 				onChangeText={type === 'phone' ? handleChangeText : props.onChangeText}
+				className={error ? 'border border-red-500' : ''}
 				{...props}
 			/>
 		</View>

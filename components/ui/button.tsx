@@ -8,11 +8,13 @@ export function Button({
 	children,
 	onPress,
 	color = 'primary',
+	disabled = false,
 }: {
 	icon?: React.ReactNode;
 	children: React.ReactNode;
 	onPress: () => void;
 	color?: 'primary' | 'white';
+	disabled?: boolean;
 }) {
 	return (
 		<View style={styles.shadowContainer}>
@@ -21,7 +23,9 @@ export function Button({
 				style={({ pressed }) => [
 					styles.buttonContainer,
 					{ opacity: pressed ? 0.85 : 1 }, // Subtle feedback on press
+					disabled && { opacity: 0.5 },
 				]}
+				disabled={disabled}
 			>
 				<LinearGradient
 					colors={
