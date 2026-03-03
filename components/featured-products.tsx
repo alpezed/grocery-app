@@ -7,7 +7,7 @@ import {
 	useRemoveFromFavorite,
 } from '@/lib/queries/products';
 import { Product } from '@/schema/product.schema';
-import { useUser } from '@clerk/clerk-expo';
+import { useAuth, useUser } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -69,6 +69,7 @@ export default function FeaturesProducts() {
 	const router = useRouter();
 	const { data, isLoading, error, status } = useProducts();
 	const { user } = useUser();
+	const { isSignedIn } = useAuth();
 
 	const renderProductItem = ({ item }: { item: Product }) => {
 		const isFavorite = item.favorites?.some(
@@ -87,18 +88,20 @@ export default function FeaturesProducts() {
 						<Text style={styles.newBadgeText}>New</Text>
 					</View>
 				)} */}
-				<FavoriteButton
-					favoriteId={getFavoriteId()}
-					productId={item.id}
-					isFavorite={isFavorite}
-					userId={user?.id}
-				/>
+				{isSignedIn && (
+					<FavoriteButton
+						favoriteId={getFavoriteId()}
+						productId={item.id}
+						isFavorite={isFavorite}
+						userId={user?.id}
+					/>
+				)}
 				<Pressable
 					style={({ pressed }) => [
 						styles.productItem,
 						{ opacity: pressed ? 0.8 : 1 },
 					]}
-					onPress={() => router.push(`/(products)/${item.documentId}`)}
+					onPress={() => router.push(`/products/${item.documentId}`)}
 				>
 					<Image source={item.image} style={styles.productItemImage} />
 					<View className='py-2'>

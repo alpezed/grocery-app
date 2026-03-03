@@ -3,9 +3,9 @@ import { Icon } from '@/components/ui/icon';
 import Input from '@/components/ui/input';
 import { Colors } from '@/constants/theme';
 import AuthLayout from '@/layout/auth';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import { StyleSheet, Switch, Text, View } from 'react-native';
 
 export default function LoginScreen() {
 	const router = useRouter();
@@ -53,23 +53,17 @@ export default function LoginScreen() {
 					<Text style={styles.rememberMeText}>Remember me</Text>
 				</View>
 
-				<Pressable
-					onPress={() => console.log('Forgot Password Pressed')}
-					style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
-				>
-					<Text style={styles.forgotPasswordText}>Forgot password</Text>
-				</Pressable>
+				<Link href='/forgot-password' style={styles.forgotPasswordText}>
+					Forgot password
+				</Link>
 			</View>
 			<Button onPress={() => router.push('/(tabs)')}>Login</Button>
 			<View style={styles.linkContainer}>
 				<View style={styles.linkTextContainer}>
 					<Text style={styles.linkText}>Don&apos;t have an account?</Text>
-					<Text
-						style={styles.link}
-						onPress={() => router.push('/(auth)/signup')}
-					>
+					<Link href='/signup' style={styles.link}>
 						Sign up
-					</Text>
+					</Link>
 				</View>
 			</View>
 		</AuthLayout>

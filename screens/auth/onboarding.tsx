@@ -5,7 +5,7 @@ import AuthLayout from '@/layout/auth';
 import { resetOnboardingStore } from '@/store/use-onboarding';
 import { useSSO } from '@clerk/clerk-expo';
 import * as AuthSession from 'expo-auth-session';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import React, { useCallback, useEffect } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
@@ -111,7 +111,7 @@ export default function AuthOnboardingScreen() {
 					Continue with google
 				</Button>
 				<Button
-					onPress={() => router.push('/(auth)/signup')}
+					onPress={() => router.push('/signup')}
 					icon={
 						<Icon
 							name='CircleUserRound'
@@ -125,9 +125,9 @@ export default function AuthOnboardingScreen() {
 			</View>
 			<View style={styles.linkTextContainer}>
 				<Text style={styles.linkText}>Already have an account?</Text>
-				<Text style={styles.link} onPress={() => router.push('/(auth)/login')}>
+				<Link href='/login' style={styles.link}>
 					Login
-				</Text>
+				</Link>
 			</View>
 		</AuthLayout>
 	);

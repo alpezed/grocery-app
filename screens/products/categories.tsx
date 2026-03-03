@@ -22,7 +22,7 @@ export default function ProductCategoriesScreen() {
 						{ opacity: pressed ? 0.8 : 1 },
 					]}
 					onPress={() => {
-						router.push(`/(products)/categories/${item.id}`);
+						router.push(`/products/categories/${item.id}`);
 					}}
 					className='items-center justify-center w-13 h-13 rounded-full p-2.5 mx-auto'
 				>

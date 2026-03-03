@@ -6,7 +6,7 @@ import AuthLayout from '@/layout/auth';
 import { SignUpSchema, signUpSchema } from '@/schema/signup.schema';
 import { isClerkAPIResponseError, useSignUp } from '@clerk/clerk-expo';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import React from 'react';
 import { Controller, Resolver, useForm } from 'react-hook-form';
 import { Alert, StyleSheet, Text, View } from 'react-native';
@@ -174,12 +174,9 @@ export default function SignUpScreen() {
 			<View style={styles.linkContainer}>
 				<Text style={styles.linkText}>
 					Already have an account?{' '}
-					<Text
-						style={styles.link}
-						onPress={() => router.push('/(auth)/login')}
-					>
+					<Link href='/login' style={styles.link}>
 						Login
-					</Text>
+					</Link>
 				</Text>
 			</View>
 		</AuthLayout>

@@ -22,7 +22,7 @@ export default function Categories() {
 						{ backgroundColor: item.color.background },
 						{ opacity: pressed ? 0.8 : 1 },
 					]}
-					onPress={() => router.push(`/categories`)}
+					onPress={() => router.push(`/products/categories/${item.id}`)}
 				>
 					<item.icon width={20} height={20} color={item.color.primary} />
 				</Pressable>
@@ -35,7 +35,7 @@ export default function Categories() {
 		<View style={styles.container}>
 			<SectionText
 				title='Categories'
-				onPress={() => router.push('/(products)/categories')}
+				onPress={() => router.push('/products/categories')}
 			/>
 			<FlashList
 				data={PRODUCT_CATEGORIES}
