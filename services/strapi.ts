@@ -1,9 +1,11 @@
 import { APIResponse } from '@/@types/api';
 import { Product } from '@/schema/product.schema';
 import { StrapiUser } from '@/schema/user.schema';
+import qs from 'qs';
 
 const STRAPI_CONFIG = {
-	apiKey: process.env.EXPO_PUBLIC_STRAPI_API_KEY,
+	// Use EXPO_PUBLIC_ prefix so the token is available in the client (required for Expo)
+	apiKey: process.env.EXPO_PUBLIC_STRAPI_API_ADMIN_TOKEN,
 	apiUrl: process.env.EXPO_PUBLIC_STRAPI_URL,
 };
 
@@ -13,7 +15,7 @@ class StrapiService {
 	}
 
 	private validateConfig() {
-		if (!STRAPI_CONFIG.apiKey || !STRAPI_CONFIG.apiUrl) {
+		if (!STRAPI_CONFIG.apiUrl) {
 			throw new Error('Strapi environment variables are missing');
 		}
 	}
@@ -31,17 +33,20 @@ class StrapiService {
 			...options,
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${STRAPI_CONFIG.apiKey}`,
+				...(STRAPI_CONFIG.apiKey && {
+					Authorization: `Bearer ${STRAPI_CONFIG.apiKey}`,
+				}),
 				...options.headers,
 			},
 		});
 
 		if (!response.ok) {
-			// Strapi often provides detailed errors in the body
 			const errorData = await response.json().catch(() => ({}));
-			throw new Error(
-				errorData.error?.message || `Request failed: ${response.status}`
-			);
+			const message =
+				errorData.error?.message ??
+				(typeof errorData.message === 'string' ? errorData.message : null) ??
+				`Request failed: ${response.status}`;
+			throw new Error(message);
 		}
 
 		return response.json();
@@ -63,13 +68,50 @@ class StrapiService {
 	}
 
 	async getProducts() {
+		const query = qs.stringify({
+			populate: '*',
+		});
 		try {
 			const result = await this.request<APIResponse<Product[]>>(
-				'/products?populate[0]=image'
+				`/products?${query}`
 			);
 			return result.data;
 		} catch (error) {
 			console.error('[StrapiService] Products Error:', error);
+			throw error;
+		}
+	}
+
+	async markAsFavorite(productId: number, clerkId: string) {
+		console.log('Marking as favorite', productId, clerkId);
+		try {
+			const result = await this.request<APIResponse<{ id: number }>>(
+				`/favorites`,
+				{
+					method: 'POST',
+					body: JSON.stringify({
+						data: {
+							clerkId,
+							product: productId,
+						},
+					}),
+				}
+			);
+			return result.data;
+		} catch (error) {
+			console.error('[StrapiService] Mark as Favorite Error:', error);
+			throw error;
+		}
+	}
+
+	async removeFromFavorite(documentId: string) {
+		console.log('Removing from favorite', documentId);
+		try {
+			await this.request(`/favorites/${documentId}`, {
+				method: 'DELETE',
+			});
+		} catch (error) {
+			console.error('[StrapiService] Remove from Favorite Error:', error);
 			throw error;
 		}
 	}

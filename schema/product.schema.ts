@@ -37,6 +37,16 @@ export const ProductSchema = z.object({
 		name: z.string(),
 	}),
 	unit: z.string(),
+	favorites: z.array(
+		z.object({
+			id: z.number(),
+			documentId: z.string(),
+			clerkId: z.string(),
+			productId: z.number(),
+			createdAt: z.coerce.date(),
+			updatedAt: z.coerce.date(),
+		})
+	),
 	createdAt: z.coerce.date(),
 	updatedAt: z.coerce.date(),
 	publishedAt: z.coerce.date(),

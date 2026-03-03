@@ -1,8 +1,13 @@
 import SectionText from '@/components/section-text';
 import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
-import { useProducts } from '@/lib/queries/products';
+import {
+	useMarkAsFavorite,
+	useProducts,
+	useRemoveFromFavorite,
+} from '@/lib/queries/products';
 import { Product } from '@/schema/product.schema';
+import { useUser } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -15,11 +20,66 @@ import {
 	View,
 } from 'react-native';
 
+function FavoriteButton({
+	favoriteId,
+	productId,
+	isFavorite,
+	userId,
+}: {
+	favoriteId?: string;
+	productId: number;
+	isFavorite: boolean;
+	userId?: string;
+}) {
+	const { mutateAsync: markAsFavorite, isPending: isMarkingAsFavorite } =
+		useMarkAsFavorite();
+	const { mutateAsync: removeFromFavorite, isPending: isRemovingFromFavorite } =
+		useRemoveFromFavorite();
+
+	const onMarkAsFavorite = async () => {
+		if (!userId) return;
+		if (isFavorite && favoriteId) {
+			await removeFromFavorite(favoriteId);
+		} else {
+			await markAsFavorite({ productId, userId });
+		}
+	};
+
+	const isLoading = isMarkingAsFavorite || isRemovingFromFavorite;
+
+	return (
+		<Pressable
+			style={styles.favoriteButton}
+			onPress={onMarkAsFavorite}
+			disabled={isLoading}
+			className={isLoading ? 'opacity-50' : 'disabled:opacity-50'}
+		>
+			<Icon
+				name='Heart'
+				size={16}
+				color={isFavorite ? 'white' : Colors.light.text}
+				fill={isFavorite ? Colors.light.heart : 'none'}
+				stroke={isFavorite ? Colors.light.heart : Colors.light.text}
+			/>
+		</Pressable>
+	);
+}
+
 export default function FeaturesProducts() {
 	const router = useRouter();
 	const { data, isLoading, error, status } = useProducts();
+	const { user } = useUser();
 
 	const renderProductItem = ({ item }: { item: Product }) => {
+		const isFavorite = item.favorites?.some(
+			favorite => favorite.clerkId === user?.id
+		);
+
+		const getFavoriteId = () => {
+			return item.favorites?.find(favorite => favorite.clerkId === user?.id)
+				?.documentId;
+		};
+
 		return (
 			<View style={styles.categoryItemContainer}>
 				{/* {item.isNew && (
@@ -27,15 +87,12 @@ export default function FeaturesProducts() {
 						<Text style={styles.newBadgeText}>New</Text>
 					</View>
 				)} */}
-				{/* <Pressable style={styles.favoriteButton}>
-					<Icon
-						name='Heart'
-						size={16}
-						color={item.isFavorite ? 'white' : Colors.light.text}
-						fill={item.isFavorite ? Colors.light.heart : 'none'}
-						stroke={item.isFavorite ? Colors.light.heart : Colors.light.text}
-					/>
-				</Pressable> */}
+				<FavoriteButton
+					favoriteId={getFavoriteId()}
+					productId={item.id}
+					isFavorite={isFavorite}
+					userId={user?.id}
+				/>
 				<Pressable
 					style={({ pressed }) => [
 						styles.productItem,
