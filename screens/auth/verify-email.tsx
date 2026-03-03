@@ -5,9 +5,13 @@ import {
 	verifyCodeSchema,
 } from '@/schema/verify-code.schema';
 import { strapiService } from '@/services/strapi';
-import { isClerkAPIResponseError, useSignUp } from '@clerk/clerk-expo';
+import {
+	isClerkAPIResponseError,
+	useSignIn,
+	useSignUp,
+} from '@clerk/clerk-expo';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { useController, useForm } from 'react-hook-form';
 import {
@@ -26,13 +30,24 @@ import {
 const length = 6;
 
 export function VerifyEmailScreen() {
+	const router = useRouter();
 	const [otp, setOtp] = useState(new Array(length).fill(''));
 	const inputs = useRef<TextInput[]>([]);
-	const { isLoaded, signUp, setActive } = useSignUp();
+	const {
+		isLoaded: isLoadedSignUp,
+		signUp,
+		setActive: setActiveSignUp,
+	} = useSignUp();
+	const {
+		isLoaded: isLoadedSignIn,
+		signIn,
+		setActive: setActiveSignIn,
+	} = useSignIn();
 
-	const { email, password } = useLocalSearchParams<{
+	const { email, password, action } = useLocalSearchParams<{
 		email: string;
 		password: string;
+		action: 'signup' | 'login';
 	}>();
 
 	const {
@@ -68,9 +83,16 @@ export function VerifyEmailScreen() {
 	}, []);
 
 	const resendVerificationCode = async () => {
-		if (!isLoaded) return;
+		if (!isLoadedSignUp || !isLoadedSignIn) return;
+
 		try {
-			await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+			if (action === 'signup') {
+				await signUp?.prepareEmailAddressVerification({
+					strategy: 'email_code',
+				});
+			} else {
+				await signIn?.prepareSecondFactor({ strategy: 'email_code' });
+			}
 			reset();
 			resetField('code');
 			Alert.alert('Verification code resent');
@@ -134,19 +156,73 @@ export function VerifyEmailScreen() {
 	};
 
 	const onVerifyPress = async (data: VerifyCodeSchema) => {
-		if (!isLoaded) return;
+		if (!isLoadedSignUp || !isLoadedSignIn) return;
 
+		if (action === 'signup') {
+			try {
+				// Use the code the user provided to attempt verification
+				const signUpAttempt = await signUp.attemptEmailAddressVerification({
+					code: data.code,
+				});
+
+				// If verification was completed, set the session to active
+				// and redirect the user
+				if (signUpAttempt.status === 'complete') {
+					await setActiveSignUp({
+						session: signUpAttempt.createdSessionId,
+						navigate: async ({ session }) => {
+							if (session?.currentTask) {
+								// Handle pending session tasks
+								// See https://clerk.com/docs/guides/development/custom-flows/authentication/session-tasks
+								console.log(session?.currentTask);
+								return;
+							}
+
+							if (action === 'signup') {
+								await strapiService.createUser({
+									email: email ?? '',
+									password: password,
+									username: email ?? '',
+									clerkId: session?.user?.id ?? '',
+								});
+							}
+
+							router.replace('/');
+						},
+					});
+				} else {
+					// If the status is not complete, check why. User may need to
+					// complete further steps.
+					console.error('Sign-up attempt not complete:', signUpAttempt);
+					console.error('Sign-up attempt status:', signUpAttempt.status);
+				}
+			} catch (err) {
+				// See https://clerk.com/docs/guides/development/custom-flows/error-handling
+				// for more info on error handling
+				if (isClerkAPIResponseError(err)) {
+					if (err.errors[0].code === 'verification_expired') {
+						setError('code', { message: err.errors[0].longMessage });
+						return;
+					}
+					Alert.alert(
+						err.errors[0].longMessage ?? 'An error occurred, please try again'
+					);
+				} else {
+					Alert.alert('Error', 'An error occurred, please try again');
+				}
+			}
+		}
+
+		// Flow for signing in an existing user
 		try {
-			// Use the code the user provided to attempt verification
-			const signUpAttempt = await signUp.attemptEmailAddressVerification({
+			const signInAttempt = await signIn.attemptSecondFactor({
+				strategy: 'email_code',
 				code: data.code,
 			});
 
-			// If verification was completed, set the session to active
-			// and redirect the user
-			if (signUpAttempt.status === 'complete') {
-				await setActive({
-					session: signUpAttempt.createdSessionId,
+			if (signInAttempt.status === 'complete') {
+				await setActiveSignIn({
+					session: signInAttempt.createdSessionId,
 					navigate: async ({ session }) => {
 						if (session?.currentTask) {
 							// Handle pending session tasks
@@ -155,27 +231,18 @@ export function VerifyEmailScreen() {
 							return;
 						}
 
-						await strapiService.createUser({
-							email: email ?? '',
-							password: password,
-							username: email ?? '',
-							clerkId: session?.user?.id ?? '',
-						});
+						router.replace('/');
 					},
 				});
 			} else {
 				// If the status is not complete, check why. User may need to
 				// complete further steps.
-				console.error(JSON.stringify(signUpAttempt, null, 2));
+				console.error('Sign-in attempt not complete:', signInAttempt);
+				console.error('Sign-in attempt status:', signInAttempt.status);
 			}
 		} catch (err) {
-			// See https://clerk.com/docs/guides/development/custom-flows/error-handling
-			// for more info on error handling
+			console.error(JSON.stringify(err, null, 2));
 			if (isClerkAPIResponseError(err)) {
-				if (err.errors[0].code === 'verification_expired') {
-					setError('code', { message: err.errors[0].longMessage });
-					return;
-				}
 				Alert.alert(
 					err.errors[0].longMessage ?? 'An error occurred, please try again'
 				);
