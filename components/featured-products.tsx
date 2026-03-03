@@ -98,7 +98,7 @@ export default function FeaturesProducts() {
 						styles.productItem,
 						{ opacity: pressed ? 0.8 : 1 },
 					]}
-					onPress={() => router.push(`/products/${item.documentId}`)}
+					onPress={() => router.push(`/(products)/${item.documentId}`)}
 				>
 					<Image source={item.image} style={styles.productItemImage} />
 					<View className='py-2'>

@@ -22,7 +22,7 @@ export default function Categories() {
 						{ backgroundColor: item.color.background },
 						{ opacity: pressed ? 0.8 : 1 },
 					]}
-					onPress={() => router.push(`/(products)/categories`)}
+					onPress={() => router.push(`/categories`)}
 				>
 					<item.icon width={20} height={20} color={item.color.primary} />
 				</Pressable>
