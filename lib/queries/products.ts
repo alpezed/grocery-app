@@ -1,3 +1,4 @@
+import { ReviewInput } from '@/schema/review.schema';
 import { strapiService } from '@/services/strapi';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -30,5 +31,17 @@ export const useRemoveFromFavorite = () => {
 		mutationFn: async (documentId: string) =>
 			await strapiService.removeFromFavorite(documentId),
 		onSuccess: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
+	});
+};
+
+export const useCreateReview = (productId: string) => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (review: ReviewInput) =>
+			await strapiService.createReview(review),
+		onSuccess: () => {
+			console.log('invalidating product', productId);
+			queryClient.invalidateQueries({ queryKey: ['product', productId] });
+		},
 	});
 };

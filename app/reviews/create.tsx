@@ -1,9 +1,11 @@
 import AppHeader from '@/components/app-header';
 import { Button } from '@/components/ui/button';
 import { Colors } from '@/constants/theme';
-import { ReviewSchema, reviewSchema } from '@/schema/review.schema';
+import { useCreateReview } from '@/lib/queries/products';
+import { Review, reviewSchema } from '@/schema/review.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Rating } from '@kolking/react-native-rating';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import {
@@ -17,21 +19,26 @@ import {
 } from 'react-native';
 
 export default function WriteReview() {
+	const router = useRouter();
 	const {
 		control,
 		handleSubmit,
 		setValue,
-		formState: { errors },
-	} = useForm<ReviewSchema>({
+		formState: { errors, isSubmitting },
+	} = useForm<Review>({
 		resolver: zodResolver(reviewSchema),
 		defaultValues: {
 			rating: 0,
-			comment: '',
+			review: '',
 		},
 	});
 
+	const { productId, clerkId } = useLocalSearchParams<{
+		productId: string;
+		clerkId: string;
+	}>();
+	const { mutateAsync: createReview } = useCreateReview(productId);
 	const rating = useWatch({ control, name: 'rating' });
-
 	const handleChange = useCallback(
 		(value: number) => {
 			setValue('rating', Math.round((rating + value) * 5) / 10);
@@ -39,8 +46,15 @@ export default function WriteReview() {
 		[setValue, rating]
 	);
 
-	const onSubmit = (data: ReviewSchema) => {
+	const onSubmit = async (data: Review) => {
 		console.log(data);
+		if (!productId || !clerkId) return;
+		await createReview({
+			...data,
+			product: productId,
+			clerkId: clerkId,
+		});
+		router.back();
 	};
 
 	return (
@@ -78,13 +92,13 @@ export default function WriteReview() {
 							<View className='h-40'>
 								<Controller
 									control={control}
-									name='comment'
+									name='review'
 									render={({ field: { onChange, onBlur, value } }) => (
 										<TextInput
 											placeholder='Tell us about your experience'
 											multiline={true}
 											numberOfLines={4}
-											className={`flex-1 bg-white h-40 p-4 rounded-lg border border-transparent ${errors.comment ? 'border-red-500' : ''}`}
+											className={`flex-1 bg-white h-40 p-4 rounded-lg border border-transparent ${errors.review ? 'border-red-500' : ''}`}
 											placeholderTextColor={Colors.light.text}
 											onChangeText={onChange}
 											onBlur={onBlur}
@@ -92,13 +106,15 @@ export default function WriteReview() {
 										/>
 									)}
 								/>
-								{errors.comment && (
+								{errors.review && (
 									<Text className='text-red-500 font-sans text-sm'>
-										{errors.comment.message}
+										{errors.review.message}
 									</Text>
 								)}
 							</View>
-							<Button onPress={handleSubmit(onSubmit)}>Submit Review</Button>
+							<Button onPress={handleSubmit(onSubmit)} disabled={isSubmitting}>
+								{isSubmitting ? 'Submitting...' : 'Submit Review'}
+							</Button>
 						</View>
 					</View>
 				</View>

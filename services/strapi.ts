@@ -1,5 +1,6 @@
 import { APIResponse } from '@/@types/api';
 import { Product } from '@/schema/product.schema';
+import { Review, ReviewInput } from '@/schema/review.schema';
 import { StrapiUser } from '@/schema/user.schema';
 import qs from 'qs';
 
@@ -131,6 +132,19 @@ class StrapiService {
 			});
 		} catch (error) {
 			console.error('[StrapiService] Remove from Favorite Error:', error);
+			throw error;
+		}
+	}
+
+	async createReview(review: ReviewInput) {
+		try {
+			const result = await this.request<APIResponse<Review>>(`/reviews`, {
+				method: 'POST',
+				body: JSON.stringify({ data: review }),
+			});
+			return result.data;
+		} catch (error) {
+			console.error('[StrapiService] Create Review Error:', error);
 			throw error;
 		}
 	}

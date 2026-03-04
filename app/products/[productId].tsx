@@ -81,7 +81,12 @@ export default function ProductDetail() {
 					{data?.name}
 				</Text>
 				<Text className='text-text font-sans-medium text-sm'>{data?.unit}</Text>
-				<Ratings initialRating={averageRating} reviewsCount={reviewsCount} />
+				<Ratings
+					initialRating={averageRating}
+					reviewsCount={reviewsCount}
+					productId={productId}
+					clerkId={user?.id}
+				/>
 			</View>
 			<Text className='text-text font-sans text-sm'>
 				Organic Mountain works as a seller for many organic growers of organic
