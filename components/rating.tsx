@@ -1,7 +1,6 @@
-import { Colors } from '@/constants/theme';
-import { Rating } from '@kolking/react-native-rating';
-import { useRouter } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import { StarRating } from '@/components/ui/rating';
+import { Link, useRouter } from 'expo-router';
+import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 export default function Ratings({
@@ -12,24 +11,13 @@ export default function Ratings({
 	reviewsCount: number;
 }) {
 	const router = useRouter();
-	const [rating, setRating] = useState(initialRating);
-
-	const handleChange = useCallback(
-		(value: number) => setRating(Math.round((rating + value) * 5) / 10),
-		[rating]
-	);
 
 	return (
 		<View className='flex-row items-center gap-1'>
-			<Text className='font-sans text-sm'>{rating}</Text>
-			<Rating
-				size={15}
-				rating={rating}
-				onChange={handleChange}
-				fillColor={Colors.light.rating}
-				variant='stars-outline'
-				baseColor={Colors.light.rating}
-			/>
+			<Text className='font-sans text-sm'>{initialRating}</Text>
+			<Link href='/reviews/create'>
+				<StarRating rating={initialRating} maxStars={5} size={16} />
+			</Link>
 			<Pressable
 				style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
 				onPress={() => router.push('/reviews')}
