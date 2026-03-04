@@ -19,6 +19,13 @@ export const ProductSchema = z.object({
 	slug: z.string(),
 	description: z.array(DescriptionSchema),
 	price: z.number(),
+	reviews: z.array(
+		z.object({
+			id: z.number(),
+			documentId: z.string(),
+			rating: z.number(),
+		})
+	),
 	image: z.object({
 		url: z.string(),
 		formats: z.object({

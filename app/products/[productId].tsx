@@ -1,38 +1,87 @@
-import { Alert, Image, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Text, View } from 'react-native';
 
+import { FavoriteButton } from '@/components/featured-products';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { Quantity } from '@/components/quantity';
 import Ratings from '@/components/rating';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
+import { strapiService } from '@/services/strapi';
+import { useUser } from '@clerk/clerk-expo';
+import { useQuery } from '@tanstack/react-query';
+import { useLocalSearchParams } from 'expo-router';
 
 export default function ProductDetail() {
+	const { productId } = useLocalSearchParams<{ productId: string }>();
+	const { user } = useUser();
+
+	const { data, status, error, refetch } = useQuery({
+		queryKey: ['product', productId],
+		queryFn: () => strapiService.getProductById(productId),
+	});
+
+	if (status === 'pending') {
+		return (
+			<View className='flex-1 items-center justify-center'>
+				<ActivityIndicator />
+			</View>
+		);
+	}
+
+	if (status === 'error') {
+		return (
+			<View className='flex-1 items-center justify-center gap-2'>
+				<Text className='text-red-500'>{error?.message}</Text>
+				<Button onPress={() => refetch()}>Try again</Button>
+			</View>
+		);
+	}
+
+	const isFavorite = data.favorites?.some(
+		favorite => favorite.clerkId === user?.id
+	);
+
+	const reviews = data?.reviews ?? [];
+
+	const reviewsCount = reviews.length;
+
+	const averageRating =
+		reviewsCount === 0
+			? 0
+			: Number(
+					(
+						reviews.reduce((sum, r) => sum + r.rating, 0) / reviewsCount
+					).toFixed(1)
+				);
+
 	return (
 		<ParallaxScrollView
 			headerImage={
-				<Image
-					source={require('@/assets/images/banner-image-1.png')}
-					className='w-full h-full'
-				/>
+				<Image source={{ uri: data?.image.url }} className='w-full h-full' />
 			}
 		>
 			<View className='gap-1 relative'>
-				<Pressable className='absolute top-0 right-0 bg-white rounded-full'>
-					<Icon
-						name='Heart'
-						size={22}
-						color={false ? 'white' : Colors.light.text}
-						fill={false ? Colors.light.heart : 'none'}
-						stroke={false ? Colors.light.heart : Colors.light.text}
-					/>
-				</Pressable>
-				<Text className='text-primary-dark font-sans-medium'>$2.22</Text>
-				<Text className='font-sans-medium text-xl text-gray-900'>
-					Organic Lemons
+				<FavoriteButton
+					size={22}
+					productId={productId}
+					favoriteId={
+						data?.favorites?.find(f => f.clerkId === user?.id)?.documentId
+					}
+					isFavorite={isFavorite}
+					className='w-6 h-6 top-0 right-0'
+				/>
+				<Text className='text-primary-dark font-sans-medium'>
+					{data?.price.toLocaleString('en-US', {
+						style: 'currency',
+						currency: 'USD',
+					})}
 				</Text>
-				<Text className='text-text font-sans-medium text-sm'>1.50 lbs</Text>
-				<Ratings />
+				<Text className='font-sans-medium text-xl text-gray-900'>
+					{data?.name}
+				</Text>
+				<Text className='text-text font-sans-medium text-sm'>{data?.unit}</Text>
+				<Ratings initialRating={averageRating} reviewsCount={reviewsCount} />
 			</View>
 			<Text className='text-text font-sans text-sm'>
 				Organic Mountain works as a seller for many organic growers of organic

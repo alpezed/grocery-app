@@ -8,6 +8,7 @@ import {
 } from '@/lib/queries/products';
 import { Product } from '@/schema/product.schema';
 import { useAuth, useUser } from '@clerk/clerk-expo';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -20,43 +21,51 @@ import {
 	View,
 } from 'react-native';
 
-function FavoriteButton({
+export function FavoriteButton({
 	favoriteId,
 	productId,
 	isFavorite,
-	userId,
+	className,
+	size = 16,
 }: {
 	favoriteId?: string;
-	productId: number;
+	productId: string;
 	isFavorite: boolean;
-	userId?: string;
+	className?: string;
+	size?: number;
 }) {
+	const queryClient = useQueryClient();
 	const { mutateAsync: markAsFavorite, isPending: isMarkingAsFavorite } =
 		useMarkAsFavorite();
 	const { mutateAsync: removeFromFavorite, isPending: isRemovingFromFavorite } =
 		useRemoveFromFavorite();
+	const { user } = useUser();
+	const { isSignedIn } = useAuth();
+
+	if (!isSignedIn) return null;
 
 	const onMarkAsFavorite = async () => {
-		if (!userId) return;
+		if (!user?.id) return;
 		if (isFavorite && favoriteId) {
 			await removeFromFavorite(favoriteId);
 		} else {
-			await markAsFavorite({ productId, userId });
+			await markAsFavorite({ productId, userId: user.id });
 		}
+		console.log('invalidating product', productId);
+		queryClient.invalidateQueries({ queryKey: ['product', productId] });
 	};
 
 	const isLoading = isMarkingAsFavorite || isRemovingFromFavorite;
 
 	return (
 		<Pressable
-			style={styles.favoriteButton}
 			onPress={onMarkAsFavorite}
 			disabled={isLoading}
-			className={isLoading ? 'opacity-50' : 'disabled:opacity-50'}
+			className={`absolute top-2.5 right-2.5 bg-white rounded-full p-[5px] z-1 ${className} ${isLoading ? 'opacity-50' : 'disabled:opacity-50'}`}
 		>
 			<Icon
 				name='Heart'
-				size={16}
+				size={size}
 				color={isFavorite ? 'white' : Colors.light.text}
 				fill={isFavorite ? Colors.light.heart : 'none'}
 				stroke={isFavorite ? Colors.light.heart : Colors.light.text}
@@ -67,9 +76,8 @@ function FavoriteButton({
 
 export default function FeaturesProducts() {
 	const router = useRouter();
-	const { data, isLoading, error, status } = useProducts();
+	const { data, error, status } = useProducts();
 	const { user } = useUser();
-	const { isSignedIn } = useAuth();
 
 	const renderProductItem = ({ item }: { item: Product }) => {
 		const isFavorite = item.favorites?.some(
@@ -88,14 +96,11 @@ export default function FeaturesProducts() {
 						<Text style={styles.newBadgeText}>New</Text>
 					</View>
 				)} */}
-				{isSignedIn && (
-					<FavoriteButton
-						favoriteId={getFavoriteId()}
-						productId={item.id}
-						isFavorite={isFavorite}
-						userId={user?.id}
-					/>
-				)}
+				<FavoriteButton
+					favoriteId={getFavoriteId()}
+					productId={item.documentId}
+					isFavorite={isFavorite}
+				/>
 				<Pressable
 					style={({ pressed }) => [
 						styles.productItem,
@@ -128,10 +133,6 @@ export default function FeaturesProducts() {
 		);
 	};
 
-	if (error) {
-		return <Text className='text-red-500'>Error: {error.message}</Text>;
-	}
-
 	return (
 		<View style={styles.container}>
 			<SectionText
@@ -140,12 +141,13 @@ export default function FeaturesProducts() {
 					console.log('All categories');
 				}}
 			/>
-			{isLoading && (
+			{status === 'pending' ? (
 				<View className='flex-1 items-center justify-center py-18'>
 					<ActivityIndicator size='small' color={Colors.light.primaryDark} />
 				</View>
-			)}
-			{status === 'success' && (
+			) : status === 'error' ? (
+				<Text className='text-red-500'>Error: {error?.message}</Text>
+			) : (
 				<FlatList
 					data={data}
 					numColumns={2}

@@ -4,9 +4,15 @@ import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-export default function Ratings() {
+export default function Ratings({
+	initialRating,
+	reviewsCount,
+}: {
+	initialRating: number;
+	reviewsCount: number;
+}) {
 	const router = useRouter();
-	const [rating, setRating] = useState(0);
+	const [rating, setRating] = useState(initialRating);
 
 	const handleChange = useCallback(
 		(value: number) => setRating(Math.round((rating + value) * 5) / 10),
@@ -28,7 +34,9 @@ export default function Ratings() {
 				style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
 				onPress={() => router.push('/reviews')}
 			>
-				<Text className='text-text font-sans text-sm'>(89 reviews)</Text>
+				<Text className='text-text font-sans text-sm'>
+					({reviewsCount} {reviewsCount === 1 ? 'review' : 'reviews'})
+				</Text>
 			</Pressable>
 		</View>
 	);

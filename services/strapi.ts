@@ -28,7 +28,6 @@ class StrapiService {
 		options: RequestInit = {}
 	): Promise<T> {
 		const url = `${STRAPI_CONFIG.apiUrl}/api${endpoint}`;
-
 		const response = await fetch(url, {
 			...options,
 			headers: {
@@ -49,7 +48,12 @@ class StrapiService {
 			throw new Error(message);
 		}
 
-		return response.json();
+		// Strapi DELETE returns 204 No Content with empty body - don't parse as JSON
+		const text = await response.text();
+		if (!text || text.trim() === '') {
+			return null as T;
+		}
+		return JSON.parse(text) as T;
 	}
 
 	async createUser(user: StrapiUser) {
@@ -63,6 +67,21 @@ class StrapiService {
 		} catch (error) {
 			// Log locally, but let the UI handle the specific error message
 			console.error('[StrapiService] Registration Error:', error);
+			throw error;
+		}
+	}
+
+	async getProductById(productId: string) {
+		const query = qs.stringify({
+			populate: '*',
+		});
+		try {
+			const result = await this.request<APIResponse<Product>>(
+				`/products/${productId}?${query}`
+			);
+			return result.data;
+		} catch (error) {
+			console.error('[StrapiService] Product Error:', error);
 			throw error;
 		}
 	}
@@ -82,7 +101,7 @@ class StrapiService {
 		}
 	}
 
-	async markAsFavorite(productId: number, clerkId: string) {
+	async markAsFavorite(productId: string, clerkId: string) {
 		console.log('Marking as favorite', productId, clerkId);
 		try {
 			const result = await this.request<APIResponse<{ id: number }>>(

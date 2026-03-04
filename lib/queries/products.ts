@@ -15,7 +15,7 @@ export const useMarkAsFavorite = () => {
 			productId,
 			userId,
 		}: {
-			productId: number;
+			productId: string;
 			userId: string;
 		}) => await strapiService.markAsFavorite(productId, userId),
 		onSuccess: () => {
