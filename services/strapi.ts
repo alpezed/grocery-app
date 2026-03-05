@@ -1,6 +1,6 @@
 import { APIResponse } from '@/@types/api';
 import { Product } from '@/schema/product.schema';
-import { Review, ReviewInput } from '@/schema/review.schema';
+import { Review, ReviewInput, ReviewResponse } from '@/schema/review.schema';
 import { StrapiUser } from '@/schema/user.schema';
 import qs from 'qs';
 
@@ -145,6 +145,29 @@ class StrapiService {
 			return result.data;
 		} catch (error) {
 			console.error('[StrapiService] Create Review Error:', error);
+			throw error;
+		}
+	}
+
+	async getReviewsByProductId(productId: string) {
+		const query = qs.stringify({
+			populate: '*',
+			sort: 'createdAt:desc',
+			filters: {
+				product: {
+					documentId: {
+						$eq: productId,
+					},
+				},
+			},
+		});
+		try {
+			const result = await this.request<APIResponse<ReviewResponse[]>>(
+				`/reviews?${query}`
+			);
+			return result.data;
+		} catch (error) {
+			console.error('[StrapiService] Get Reviews Error:', error);
 			throw error;
 		}
 	}

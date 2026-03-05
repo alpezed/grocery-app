@@ -13,5 +13,14 @@ export const reviewInputSchema = reviewSchema.extend({
 	clerkId: z.string().min(1, { message: 'User is required' }),
 });
 
+export const reviewResponseSchema = z.object({
+	id: z.string(),
+	documentId: z.string(),
+	rating: z.number(),
+	review: z.string(),
+	clerkId: z.string(),
+});
+
 export type Review = z.infer<typeof reviewSchema>;
 export type ReviewInput = z.infer<typeof reviewInputSchema>;
+export type ReviewResponse = z.infer<typeof reviewResponseSchema>;

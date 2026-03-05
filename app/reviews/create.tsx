@@ -5,10 +5,12 @@ import { useCreateReview } from '@/lib/queries/products';
 import { Review, reviewSchema } from '@/schema/review.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Rating } from '@kolking/react-native-rating';
+import { useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import {
+	Alert,
 	Keyboard,
 	KeyboardAvoidingView,
 	Platform,
@@ -20,6 +22,7 @@ import {
 
 export default function WriteReview() {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const {
 		control,
 		handleSubmit,
@@ -47,13 +50,17 @@ export default function WriteReview() {
 	);
 
 	const onSubmit = async (data: Review) => {
-		console.log(data);
-		if (!productId || !clerkId) return;
+		if (!productId || !clerkId) {
+			Alert.alert('Error', 'Product ID or Clerk ID is missing');
+			return;
+		}
+
 		await createReview({
 			...data,
 			product: productId,
 			clerkId: clerkId,
 		});
+		queryClient.invalidateQueries({ queryKey: ['reviews', productId] });
 		router.back();
 	};
 
@@ -98,7 +105,7 @@ export default function WriteReview() {
 											placeholder='Tell us about your experience'
 											multiline={true}
 											numberOfLines={4}
-											className={`flex-1 bg-white h-40 p-4 rounded-lg border border-transparent ${errors.review ? 'border-red-500' : ''}`}
+											className={`flex-1 bg-white h-40 p-4 rounded-lg border font-sans text-xs border-transparent ${errors.review ? 'border-red-500' : ''}`}
 											placeholderTextColor={Colors.light.text}
 											onChangeText={onChange}
 											onBlur={onBlur}

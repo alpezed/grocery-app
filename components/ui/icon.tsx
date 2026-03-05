@@ -9,7 +9,13 @@ type IconProps = {
 	size?: number;
 };
 
-export function Icon({ name, color, size, ...props }: IconProps & SvgProps) {
+export function Icon({
+	name,
+	color,
+	size,
+	strokeWidth = 1.8,
+	...props
+}: IconProps & SvgProps & { strokeWidth?: number }) {
 	const LucideIcon = (
 		icons as Record<
 			keyof typeof icons,
@@ -27,7 +33,14 @@ export function Icon({ name, color, size, ...props }: IconProps & SvgProps) {
 		throw new Error(`Icon ${name} not found`);
 	}
 
-	return <LucideIcon color={color} size={size} {...props} strokeWidth={1.8} />;
+	return (
+		<LucideIcon
+			color={color}
+			size={size}
+			{...props}
+			strokeWidth={strokeWidth}
+		/>
+	);
 }
 
 export default Icon;

@@ -32,7 +32,15 @@ export default function Ratings({
 			</Link>
 			<Pressable
 				style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
-				onPress={() => router.push('/reviews')}
+				onPress={() =>
+					router.push({
+						pathname: '/reviews',
+						params: {
+							productId: productId,
+							clerkId: clerkId,
+						},
+					})
+				}
 			>
 				<Text className='text-text font-sans text-sm'>
 					({reviewsCount} {reviewsCount === 1 ? 'review' : 'reviews'})
