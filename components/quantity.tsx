@@ -1,34 +1,15 @@
 import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
-import React, { useState } from 'react';
+import { useQuantity } from '@/hooks/use-quantity';
+import React from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
 const MAX_QUANTITY = 10;
 const MIN_QUANTITY = 1;
 
 export function Quantity() {
-	const [localValue, setLocalValue] = useState<number>(MIN_QUANTITY);
-
-	const handleDecrement = () => {
-		if (localValue > MIN_QUANTITY) {
-			setLocalValue(localValue - MIN_QUANTITY);
-		}
-	};
-
-	const handleIncrement = () => {
-		if (localValue < MAX_QUANTITY) {
-			setLocalValue(localValue + 1);
-		}
-	};
-
-	const handleChangeText = (text: string) => {
-		const value = parseInt(text);
-		if (isNaN(value)) {
-			setLocalValue(1);
-		} else {
-			setLocalValue(Math.max(1, Math.min(MAX_QUANTITY, value)));
-		}
-	};
+	const { localValue, handleDecrement, handleIncrement, handleChangeText } =
+		useQuantity();
 
 	return (
 		<View className='flex-row justify-between items-center bg-white rounded h-12.5'>
