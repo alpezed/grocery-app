@@ -1,5 +1,5 @@
 import { APIResponse } from '@/@types/api';
-import { Product } from '@/schema/product.schema';
+import { FavoriteProduct, Product } from '@/schema/product.schema';
 import { Review, ReviewInput, ReviewResponse } from '@/schema/review.schema';
 import { StrapiUser } from '@/schema/user.schema';
 import qs from 'qs';
@@ -168,6 +168,23 @@ class StrapiService {
 			return result.data;
 		} catch (error) {
 			console.error('[StrapiService] Get Reviews Error:', error);
+			throw error;
+		}
+	}
+
+	async getFavoriteProducts() {
+		const query = qs.stringify({
+			populate: {
+				product: { populate: 'image' },
+			},
+		});
+		try {
+			const result = await this.request<APIResponse<FavoriteProduct[]>>(
+				`/favorites?${query}`
+			);
+			return result.data;
+		} catch (error) {
+			console.error('[StrapiService] Favorite Products Error:', error);
 			throw error;
 		}
 	}

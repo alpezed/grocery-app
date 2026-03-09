@@ -40,8 +40,14 @@ export const useCreateReview = (productId: string) => {
 		mutationFn: async (review: ReviewInput) =>
 			await strapiService.createReview(review),
 		onSuccess: () => {
-			console.log('invalidating product', productId);
 			queryClient.invalidateQueries({ queryKey: ['product', productId] });
 		},
+	});
+};
+
+export const useGetFavoriteProducts = () => {
+	return useQuery({
+		queryKey: ['favorite-products'],
+		queryFn: () => strapiService.getFavoriteProducts(),
 	});
 };

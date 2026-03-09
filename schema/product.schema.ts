@@ -59,4 +59,9 @@ export const ProductSchema = z.object({
 	publishedAt: z.coerce.date(),
 });
 
+export const FavoriteProductSchema = ProductSchema.extend({
+	product: ProductSchema,
+});
+
 export type Product = z.infer<typeof ProductSchema>;
+export type FavoriteProduct = z.infer<typeof FavoriteProductSchema>;
