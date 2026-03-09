@@ -77,7 +77,11 @@ export default function ProfileScreen() {
 				</Text>
 			</View>
 			<View className='px-9 mt-7.5'>
-				<ProfileItem icon='CircleUser' title='About' onPress={() => {}} />
+				<ProfileItem
+					icon='CircleUser'
+					title='About'
+					onPress={() => router.push('/about')}
+				/>
 				<ProfileItem
 					icon='Package'
 					title='Orders'

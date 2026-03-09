@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		fontFamily: 'Montserrat',
-		color: Colors.light.text,
+		// color: Colors.light.text,
 		backgroundColor: Colors.light.background,
 		borderRadius: 8,
 		paddingInline: 65,
