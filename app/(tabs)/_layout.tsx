@@ -23,7 +23,7 @@ export default function TabLayout() {
 				name='index'
 				options={{
 					tabBarIcon: ({ color }) => (
-						<Icon name='House' size={28} color={color} />
+						<Icon name='House' size={26} color={color} />
 					),
 				}}
 			/>
@@ -31,7 +31,7 @@ export default function TabLayout() {
 				name='profile'
 				options={{
 					tabBarIcon: ({ color }) => (
-						<Icon name='CircleUser' size={28} color={color} />
+						<Icon name='CircleUser' size={26} color={color} />
 					),
 				}}
 			/>
@@ -39,15 +39,15 @@ export default function TabLayout() {
 				name='favorites'
 				options={{
 					tabBarIcon: ({ color }) => (
-						<Icon name='Heart' size={28} color={color} />
+						<Icon name='Heart' size={26} color={color} />
 					),
 				}}
 			/>
 			<Tabs.Screen
-				name='orders'
+				name='cart'
 				options={{
 					tabBarIcon: ({ color }) => (
-						<Icon name='ShoppingBag' size={28} color={color} />
+						<Icon name='ShoppingBag' size={26} color={color} />
 					),
 				}}
 			/>
