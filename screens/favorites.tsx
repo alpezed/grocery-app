@@ -1,5 +1,5 @@
 import AppHeader from '@/components/app-header';
-import ProductList from '@/components/product-list';
+import { FavoriteProductList } from '@/components/product-list';
 import { Colors } from '@/constants/theme';
 import { useGetFavoriteProducts } from '@/lib/queries/products';
 import React from 'react';
@@ -15,7 +15,7 @@ export default function FavoritesScreen() {
 					<ActivityIndicator size='large' color={Colors.light.primaryDark} />
 				</View>
 			)}
-			{status === 'success' && <ProductList products={products} />}
+			{status === 'success' && <FavoriteProductList products={products} />}
 		</View>
 	);
 }

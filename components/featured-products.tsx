@@ -1,3 +1,4 @@
+import ProductCard from '@/components/product-card';
 import SectionText from '@/components/section-text';
 import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
@@ -7,19 +8,19 @@ import {
 	useRemoveFromFavorite,
 } from '@/lib/queries/products';
 import { Product } from '@/schema/product.schema';
+import { useCartStore } from '@/store/use-cart';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'expo-router';
 import React from 'react';
 import {
 	ActivityIndicator,
 	FlatList,
-	Image,
 	Pressable,
 	StyleSheet,
 	Text,
 	View,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 export function FavoriteButton({
 	favoriteId,
@@ -75,9 +76,9 @@ export function FavoriteButton({
 }
 
 export default function FeaturesProducts() {
-	const router = useRouter();
 	const { data, error, status } = useProducts();
 	const { user } = useUser();
+	const { addItem } = useCartStore();
 
 	const renderProductItem = ({ item }: { item: Product }) => {
 		const isFavorite = item.favorites?.some(
@@ -90,46 +91,18 @@ export default function FeaturesProducts() {
 		};
 
 		return (
-			<View style={styles.categoryItemContainer}>
-				{/* {item.isNew && (
-					<View style={styles.newBadge}>
-						<Text style={styles.newBadgeText}>New</Text>
-					</View>
-				)} */}
-				<FavoriteButton
-					favoriteId={getFavoriteId()}
-					productId={item.documentId}
-					isFavorite={isFavorite}
-				/>
-				<Pressable
-					style={({ pressed }) => [
-						styles.productItem,
-						{ opacity: pressed ? 0.8 : 1 },
-					]}
-					onPress={() => router.push(`/products/${item.documentId}`)}
-				>
-					<Image source={item.image} style={styles.productItemImage} />
-					<View className='py-2'>
-						<Text style={styles.productPrice}>
-							{item.price.toLocaleString('en-US', {
-								style: 'currency',
-								currency: 'USD',
-							})}
-						</Text>
-						<Text style={styles.productItemText}>{item.name}</Text>
-						<Text style={styles.productUnit}>{item.unit}</Text>
-					</View>
-				</Pressable>
-				<Pressable
-					style={({ pressed }) => [
-						styles.addToCartContainer,
-						{ opacity: pressed ? 0.8 : 1 },
-					]}
-				>
-					<Icon name='ShoppingBag' size={14} color={Colors.light.primaryDark} />
-					<Text style={styles.addToCartText}>Add to cart</Text>
-				</Pressable>
-			</View>
+			<ProductCard
+				product={item}
+				favoriteId={getFavoriteId()}
+				isFavorite={isFavorite}
+				onAddToCart={() => {
+					addItem({ ...item, quantity: 1 });
+					Toast.show({
+						type: 'success',
+						text1: 'Added to cart',
+					});
+				}}
+			/>
 		);
 	};
 

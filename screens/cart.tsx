@@ -1,13 +1,24 @@
-import AppHeader from '@/components/app-header';
-import EmptyState from '@/components/empty-state';
-import { Button } from '@/components/ui/button';
 import { useNavigation, useRouter } from 'expo-router';
 import React, { useLayoutEffect } from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
+
+import AppHeader from '@/components/app-header';
+import EmptyState from '@/components/empty-state';
+import { ProductList } from '@/components/product-list';
+import { Button } from '@/components/ui/button';
+import { useCartStore } from '@/store/use-cart';
 
 export default function CartScreen() {
 	const router = useRouter();
 	const navigation = useNavigation();
+	const { items } = useCartStore();
+
+	const subtotal = items.reduce(
+		(acc, item) => acc + item.price * (item.quantity ?? 1),
+		0
+	);
+	const shipping = 0;
+	const total = subtotal + shipping;
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
@@ -19,7 +30,7 @@ export default function CartScreen() {
 			navigation.setOptions({
 				tabBarStyle: undefined,
 			});
-	}, [navigation]);
+	}, [navigation, items]);
 
 	const renderEmptyState = () => {
 		return (
@@ -41,7 +52,35 @@ export default function CartScreen() {
 	return (
 		<View className='flex-1 bg-background-light'>
 			<AppHeader title='Shopping Cart' />
-			{renderEmptyState()}
+			{items.length > 0 ? (
+				<View className='flex-1'>
+					<ProductList products={items} />
+					<View className='px-4 py-6 bg-white rounded-tl-3xl rounded-tr-3xl gap-4 shadow-[0px_0px_30px_0px_rgba(0,0,0,0.05)]'>
+						<View className='gap-2'>
+							<View className='flex-row justify-between items-center'>
+								<Text className='text-text font-medium'>Subtotal</Text>
+								<Text className='text-text font-medium'>
+									${subtotal.toFixed(2)}
+								</Text>
+							</View>
+							<View className='flex-row justify-between items-center'>
+								<Text className='text-text font-medium'>Shipping charges</Text>
+								<Text className='text-text font-medium'>
+									${shipping.toFixed(2)}
+								</Text>
+							</View>
+						</View>
+						<View className='w-full h-px bg-border' />
+						<View className='flex-row justify-between items-center'>
+							<Text className='text-lg font-bold'>Total</Text>
+							<Text className='text-lg font-bold'>${total.toFixed(2)}</Text>
+						</View>
+						<Button onPress={() => router.push('/checkout')}>Checkout</Button>
+					</View>
+				</View>
+			) : (
+				renderEmptyState()
+			)}
 		</View>
 	);
 }

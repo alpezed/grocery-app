@@ -20,7 +20,7 @@ import {
 	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
-import Toast from 'react-native-root-toast';
+import Toast from 'react-native-toast-message';
 
 export default function AddAddressScreen() {
 	const { user } = useUser();
@@ -48,19 +48,24 @@ export default function AddAddressScreen() {
 
 	const onSubmit = async (data: Address) => {
 		if (!user) {
-			Toast.show('User not found', { position: Toast.positions.TOP });
+			Toast.show({
+				type: 'error',
+				text1: 'User not found',
+			});
 			return;
 		}
 		try {
 			createAddress({ ...data, clerkId: user.id });
-			Toast.show('Address created successfully', {
-				position: Toast.positions.TOP,
+			Toast.show({
+				type: 'success',
+				text1: 'Address created successfully',
 			});
 			router.back();
 		} catch (error) {
 			console.error('Error creating address', (error as Error).message);
-			Toast.show('Error creating address', {
-				position: Toast.positions.TOP,
+			Toast.show({
+				type: 'error',
+				text1: 'Error creating address',
 			});
 		}
 	};

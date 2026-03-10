@@ -3,8 +3,11 @@ import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { Icon } from '@/components/ui/icon';
+import { useCartStore } from '@/store/use-cart';
 
 export default function TabLayout() {
+	const { items } = useCartStore();
+
 	return (
 		<Tabs
 			screenOptions={{
@@ -46,6 +49,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name='cart'
 				options={{
+					tabBarBadge: items.length,
 					tabBarIcon: ({ color }) => (
 						<Icon name='ShoppingBag' size={26} color={color} />
 					),

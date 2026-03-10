@@ -6,12 +6,12 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import { RootSiblingParent } from 'react-native-root-siblings';
+import Toast from 'react-native-toast-message';
 import '../global.css';
 
-// import { useColorScheme } from '@/hooks/use-color-scheme';
 import AppHeader from '@/components/app-header';
 import { Colors } from '@/constants/theme';
+import { toastConfig } from '@/lib/toast';
 import { useOnboardingStore } from '@/store/use-onboarding';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ActivityIndicator } from 'react-native';
@@ -47,43 +47,42 @@ export default function RootLayout() {
 		<ThemeProvider value={DefaultTheme}>
 			<ClerkProvider tokenCache={tokenCache}>
 				<QueryClientProvider client={queryClient}>
-					<RootSiblingParent>
-						<Stack
-							screenOptions={{
-								headerShown: false,
-								headerShadowVisible: false,
-								header: props => (
-									<AppHeader
-										title={props.options.title as string}
-										showBack={props.options.headerBackVisible as boolean}
-										headerRight={props.options.headerRight}
-									/>
-								),
-								contentStyle: {
-									backgroundColor: Colors.light.backgroundLight,
-								},
+					<Stack
+						screenOptions={{
+							headerShown: false,
+							headerShadowVisible: false,
+							header: props => (
+								<AppHeader
+									title={props.options.title as string}
+									showBack={props.options.headerBackVisible as boolean}
+									headerRight={props.options.headerRight}
+								/>
+							),
+							contentStyle: {
+								backgroundColor: Colors.light.backgroundLight,
+							},
+						}}
+					>
+						<Stack.Screen name='(tabs)' />
+						<Stack.Screen name='(auth)' />
+						<Stack.Screen name='address' />
+						<Stack.Screen
+							name='reviews/index'
+							options={{
+								title: 'Reviews',
 							}}
-						>
-							<Stack.Screen name='(tabs)' />
-							<Stack.Screen name='(auth)' />
-							<Stack.Screen name='address' />
-							<Stack.Screen
-								name='reviews/index'
-								options={{
-									title: 'Reviews',
-								}}
-							/>
-							<Stack.Screen
-								name='reviews/create'
-								options={{ headerShown: false, title: 'Create Review' }}
-							/>
-							<Stack.Screen
-								name='products/[productId]'
-								options={{ headerShown: false }}
-							/>
-							{!completed && <Stack.Screen name='onboarding' />}
-						</Stack>
-					</RootSiblingParent>
+						/>
+						<Stack.Screen
+							name='reviews/create'
+							options={{ headerShown: false, title: 'Create Review' }}
+						/>
+						<Stack.Screen
+							name='products/[productId]'
+							options={{ headerShown: false }}
+						/>
+						{!completed && <Stack.Screen name='onboarding' />}
+					</Stack>
+					<Toast config={toastConfig} />
 				</QueryClientProvider>
 			</ClerkProvider>
 		</ThemeProvider>
