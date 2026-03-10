@@ -107,7 +107,11 @@ export default function ProfileScreen() {
 					title='Transactions'
 					onPress={() => {}}
 				/>
-				<ProfileItem icon='Bell' title='Notifications' onPress={() => {}} />
+				<ProfileItem
+					icon='Bell'
+					title='Notifications'
+					onPress={() => router.push('/notifications')}
+				/>
 				<LogoutButton />
 			</View>
 		</View>
