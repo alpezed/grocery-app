@@ -1,4 +1,5 @@
 import { APIResponse } from '@/@types/api';
+import { Address, AddressResponse } from '@/schema/address.schema';
 import { FavoriteProduct, Product } from '@/schema/product.schema';
 import { Review, ReviewInput, ReviewResponse } from '@/schema/review.schema';
 import { StrapiUser } from '@/schema/user.schema';
@@ -185,6 +186,37 @@ class StrapiService {
 			return result.data;
 		} catch (error) {
 			console.error('[StrapiService] Favorite Products Error:', error);
+			throw error;
+		}
+	}
+
+	async getAddresses() {
+		const query = qs.stringify({
+			populate: '*',
+		});
+		try {
+			const result = await this.request<APIResponse<AddressResponse[]>>(
+				`/addresses?${query}`
+			);
+			return result.data;
+		} catch (error) {
+			console.error('[StrapiService] Get Addresses Error:', error);
+			throw error;
+		}
+	}
+
+	async createAddress(address: Address) {
+		try {
+			const result = await this.request<APIResponse<AddressResponse>>(
+				`/addresses`,
+				{
+					method: 'POST',
+					body: JSON.stringify({ data: address }),
+				}
+			);
+			return result.data;
+		} catch (error) {
+			console.error('[StrapiService] Create Address Error:', error);
 			throw error;
 		}
 	}

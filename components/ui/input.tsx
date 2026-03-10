@@ -6,11 +6,15 @@ export default function Input({
 	icon,
 	type = 'text',
 	error,
+	className,
+	size = 'md',
 	...props
 }: ComponentProps<typeof TextInput> & {
 	icon?: ReactNode;
 	type?: 'text' | 'password' | 'phone';
 	error?: boolean;
+	className?: string;
+	size?: 'sm' | 'md';
 }) {
 	const [phoneNumber, setPhoneNumber] = useState('');
 
@@ -47,7 +51,14 @@ export default function Input({
 
 	return (
 		<View style={styles.container}>
-			{icon && <View style={styles.iconContainer}>{icon}</View>}
+			{icon && (
+				<View
+					style={styles.iconContainer}
+					className={size === 'sm' ? 'left-5' : 'left-7'}
+				>
+					{icon}
+				</View>
+			)}
 			<TextInput
 				style={styles.input}
 				placeholderTextColor={Colors.light.text}
@@ -58,7 +69,13 @@ export default function Input({
 				textContentType={type === 'phone' ? 'telephoneNumber' : 'none'}
 				value={type === 'phone' ? phoneNumber : props.value}
 				onChangeText={type === 'phone' ? handleChangeText : props.onChangeText}
-				className={error ? 'border border-red-500' : ''}
+				className={[
+					'bg-background',
+					error ? 'border border-red-500' : '',
+					size === 'sm' ? 'py-3' : 'py-5',
+					size === 'sm' ? 'px-12 h-11.5' : 'px-16',
+					className,
+				].join(' ')}
 				{...props}
 			/>
 		</View>
@@ -67,6 +84,7 @@ export default function Input({
 
 const styles = StyleSheet.create({
 	container: {
+		flexGrow: 1,
 		position: 'relative',
 	},
 	iconContainer: {
@@ -74,17 +92,12 @@ const styles = StyleSheet.create({
 		zIndex: 10,
 		top: 0,
 		bottom: 0,
-		left: 28,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
 	input: {
 		fontFamily: 'Montserrat',
-		// color: Colors.light.text,
-		backgroundColor: Colors.light.background,
 		borderRadius: 8,
-		paddingInline: 65,
-		paddingBlock: 20,
 		flexDirection: 'row',
 		alignItems: 'center',
 		gap: 20,

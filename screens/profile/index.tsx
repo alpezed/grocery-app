@@ -92,7 +92,11 @@ export default function ProfileScreen() {
 					title='Favorites'
 					onPress={() => router.push('/favorites')}
 				/>
-				<ProfileItem icon='MapPin' title='My Address' onPress={() => {}} />
+				<ProfileItem
+					icon='MapPin'
+					title='My Address'
+					onPress={() => router.push('/address')}
+				/>
 				<ProfileItem
 					icon='CreditCard'
 					title='Create Cards'

@@ -20,9 +20,12 @@
 	--color-badge-text: #e8ad41;
 	--color-badge-bg: #fdefd5;
 
+	--font-normal: 'Montserrat-Regular';
 	--font-sans: 'Montserrat-Regular';
 	--font-sans-medium: 'Montserrat-SemiBold';
 	--font-medium: 'Montserrat-SemiBold';
 	--font-bold: 'Montserrat-Bold';
 	--font-sans-bold: 'Montserrat-Bold';
+
+	--text-2xs: 10px;
 }

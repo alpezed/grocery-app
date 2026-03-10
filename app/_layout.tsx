@@ -6,6 +6,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { RootSiblingParent } from 'react-native-root-siblings';
 import '../global.css';
 
 // import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -46,40 +47,43 @@ export default function RootLayout() {
 		<ThemeProvider value={DefaultTheme}>
 			<ClerkProvider tokenCache={tokenCache}>
 				<QueryClientProvider client={queryClient}>
-					<Stack
-						screenOptions={{
-							headerShown: false,
-							headerShadowVisible: false,
-							header: props => (
-								<AppHeader
-									title={props.options.title as string}
-									showBack={props.options.headerBackVisible as boolean}
-									headerRight={props.options.headerRight}
-								/>
-							),
-							contentStyle: {
-								backgroundColor: Colors.light.backgroundLight,
-							},
-						}}
-					>
-						<Stack.Screen name='(tabs)' />
-						<Stack.Screen name='(auth)' />
-						<Stack.Screen
-							name='reviews/index'
-							options={{
-								title: 'Reviews',
+					<RootSiblingParent>
+						<Stack
+							screenOptions={{
+								headerShown: false,
+								headerShadowVisible: false,
+								header: props => (
+									<AppHeader
+										title={props.options.title as string}
+										showBack={props.options.headerBackVisible as boolean}
+										headerRight={props.options.headerRight}
+									/>
+								),
+								contentStyle: {
+									backgroundColor: Colors.light.backgroundLight,
+								},
 							}}
-						/>
-						<Stack.Screen
-							name='reviews/create'
-							options={{ headerShown: false, title: 'Create Review' }}
-						/>
-						<Stack.Screen
-							name='products/[productId]'
-							options={{ headerShown: false }}
-						/>
-						{!completed && <Stack.Screen name='onboarding' />}
-					</Stack>
+						>
+							<Stack.Screen name='(tabs)' />
+							<Stack.Screen name='(auth)' />
+							<Stack.Screen name='address' />
+							<Stack.Screen
+								name='reviews/index'
+								options={{
+									title: 'Reviews',
+								}}
+							/>
+							<Stack.Screen
+								name='reviews/create'
+								options={{ headerShown: false, title: 'Create Review' }}
+							/>
+							<Stack.Screen
+								name='products/[productId]'
+								options={{ headerShown: false }}
+							/>
+							{!completed && <Stack.Screen name='onboarding' />}
+						</Stack>
+					</RootSiblingParent>
 				</QueryClientProvider>
 			</ClerkProvider>
 		</ThemeProvider>

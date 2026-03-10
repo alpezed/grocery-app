@@ -43,7 +43,7 @@ export default function AppHeader({
 					)}
 				</View>
 				<View className='flex-3 items-center'>
-					<Text className='text-lg font-sans-medium'>{title}</Text>
+					{title && <Text className='text-lg font-sans-medium'>{title}</Text>}
 				</View>
 				<View className='flex-1 items-end p-1'>
 					{headerRight && typeof headerRight === 'function'

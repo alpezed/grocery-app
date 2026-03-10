@@ -104,12 +104,9 @@ export default function AboutScreen() {
 				className='flex-1'
 			>
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-					<ScrollView
-						className='flex-1 py-8'
-						contentContainerClassName='justify-between items-stretch'
-					>
-						<View className='flex-1 gap-8 mb-6'>
-							<View className='flex-1 px-4 gap-4'>
+					<ScrollView contentContainerClassName='flex-1 justify-end'>
+						<View className='flex-1 mb-6 gap-6'>
+							<View className='px-4 pt-6 gap-4'>
 								<Text className='text-lg font-bold'>Personal Details</Text>
 								<View className='gap-2'>
 									<View>
@@ -195,7 +192,7 @@ export default function AboutScreen() {
 									</View>
 								</View>
 							</View>
-							<View className='flex-1 px-4 gap-4'>
+							<View className='px-4 gap-4'>
 								<Text className='text-lg font-bold'>Change Password</Text>
 								<View className='gap-2'>
 									<View>
