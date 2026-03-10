@@ -76,9 +76,11 @@ export function FavoriteButton({
 }
 
 export default function FeaturesProducts() {
-	const { data, error, status } = useProducts();
+	const { data: products, error, status } = useProducts();
 	const { user } = useUser();
 	const { addItem } = useCartStore();
+
+	console.log('products', products);
 
 	const renderProductItem = ({ item }: { item: Product }) => {
 		const isFavorite = item.favorites?.some(
@@ -122,7 +124,7 @@ export default function FeaturesProducts() {
 				<Text className='text-red-500'>Error: {error?.message}</Text>
 			) : (
 				<FlatList
-					data={data}
+					data={products?.data}
 					numColumns={2}
 					keyExtractor={item => item.documentId}
 					renderItem={renderProductItem}

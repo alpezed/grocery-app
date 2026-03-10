@@ -1,11 +1,12 @@
 import { ReviewInput } from '@/schema/review.schema';
+import { getProducts } from '@/services/product';
 import { strapiService } from '@/services/strapi';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export const useProducts = () => {
+export const useProducts = (params?: any) => {
 	return useQuery({
-		queryKey: ['products'],
-		queryFn: () => strapiService.getProducts(),
+		queryKey: ['products', params],
+		queryFn: () => getProducts(params),
 	});
 };
 

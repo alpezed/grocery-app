@@ -22,6 +22,8 @@ export const toastConfig = {
 				shadowOpacity: 0.15,
 				shadowRadius: 10,
 				elevation: 6, // Android support
+
+				bottom: 45,
 			}}
 		>
 			<Ionicons name='checkmark-circle-outline' size={22} color='white' />

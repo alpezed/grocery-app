@@ -22,7 +22,14 @@ export const unstable_settings = {
 
 SplashScreen.preventAutoHideAsync();
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: 1000 * 60 * 5, // 5 minutes
+			retry: 3,
+		},
+	},
+});
 
 export default function RootLayout() {
 	// const colorScheme = useColorScheme();
@@ -82,7 +89,7 @@ export default function RootLayout() {
 						/>
 						{!completed && <Stack.Screen name='onboarding' />}
 					</Stack>
-					<Toast config={toastConfig} />
+					<Toast config={toastConfig} position='bottom' />
 				</QueryClientProvider>
 			</ClerkProvider>
 		</ThemeProvider>
