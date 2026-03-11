@@ -3,7 +3,7 @@ import { getProducts } from '@/services/product';
 import { strapiService } from '@/services/strapi';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export const useProducts = (params?: any) => {
+export const useProducts = (params?: Record<string, any>) => {
 	return useQuery({
 		queryKey: ['products', params],
 		queryFn: () => getProducts(params),

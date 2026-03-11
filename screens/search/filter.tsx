@@ -3,8 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { StarRating } from '@/components/ui/rating';
 import { Colors } from '@/constants/theme';
+import { Filter, filterSchema } from '@/schema/filter.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
+import { Resolver, useForm, useWatch } from 'react-hook-form';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 type FilterOption = {
@@ -33,9 +36,6 @@ function CheckCircle({ checked }: { checked: boolean }) {
 
 export default function SearchFilterScreen() {
 	const router = useRouter();
-	const [minPrice, setMinPrice] = useState('');
-	const [maxPrice, setMaxPrice] = useState('');
-	const [starRating, setStarRating] = useState(4);
 	const [selectedFilters, setSelectedFilters] = useState<
 		Record<string, boolean>
 	>({
@@ -43,22 +43,42 @@ export default function SearchFilterScreen() {
 		sameDayDelivery: true,
 	});
 
-	const toggleFilter = (key: string) => {
+	const { control, handleSubmit, reset, setValue, watch } = useForm<Filter>({
+		resolver: zodResolver(filterSchema) as Resolver<Filter>,
+		defaultValues: {
+			price: {
+				min: undefined,
+				max: undefined,
+			},
+			rating: 0,
+			freeShipping: false,
+			sameDayDelivery: false,
+			discount: false,
+		},
+	});
+
+	const rating = useWatch({ control, name: 'rating' });
+	const price = useWatch({ control, name: 'price' });
+
+	const onSubmit = (data: Filter) => {
+		router.push({
+			pathname: '/search/results',
+			params: {
+				filters: JSON.stringify(data),
+			},
+		});
+	};
+
+	const toggleFilter = (key: keyof Filter) => {
 		setSelectedFilters(prev => ({
 			...prev,
 			[key]: !prev[key],
 		}));
+		setValue(key, !selectedFilters[key]);
 	};
 
 	const resetFilters = () => {
-		setMinPrice('');
-		setMaxPrice('');
-		setStarRating(0);
-		setSelectedFilters({});
-	};
-
-	const handleApply = () => {
-		router.back();
+		reset();
 	};
 
 	return (
@@ -81,8 +101,8 @@ export default function SearchFilterScreen() {
 					<Text className='font-medium text-base mb-4'>Price Range</Text>
 					<View className='flex-row gap-3'>
 						<TextInput
-							value={minPrice}
-							onChangeText={setMinPrice}
+							value={price?.min?.toString()}
+							onChangeText={value => setValue('price.min', Number(value))}
 							placeholder='Min.'
 							placeholderTextColor={Colors.light.text}
 							keyboardType='numeric'
@@ -90,8 +110,8 @@ export default function SearchFilterScreen() {
 							autoFocus
 						/>
 						<TextInput
-							value={maxPrice}
-							onChangeText={setMaxPrice}
+							value={price?.max?.toString()}
+							onChangeText={value => setValue('price.max', Number(value))}
 							placeholder='Max.'
 							placeholderTextColor={Colors.light.text}
 							keyboardType='numeric'
@@ -104,13 +124,13 @@ export default function SearchFilterScreen() {
 					<Text className='font-medium text-base mb-4'>Star Rating</Text>
 					<View className='flex-row items-center bg-background-light rounded-lg px-4 py-4 justify-between'>
 						<StarRating
-							rating={starRating}
+							rating={rating}
 							size={20}
 							readOnly={false}
-							onRate={setStarRating}
+							onRate={value => setValue('rating', value)}
 						/>
 						<Text className='font-sans text-sm text-text'>
-							{starRating} star{starRating !== 1 ? 's' : ''}
+							{rating} star{rating !== 1 ? 's' : ''}
 						</Text>
 					</View>
 				</View>
@@ -120,7 +140,7 @@ export default function SearchFilterScreen() {
 					{FILTER_OPTIONS.map(option => (
 						<Pressable
 							key={option.key}
-							onPress={() => toggleFilter(option.key)}
+							onPress={() => toggleFilter(option.key as keyof Filter)}
 							className='flex-row items-center justify-between py-3.5'
 							style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
 						>
@@ -130,14 +150,14 @@ export default function SearchFilterScreen() {
 									{option.label}
 								</Text>
 							</View>
-							<CheckCircle checked={!!selectedFilters[option.key]} />
+							<CheckCircle checked={!!watch(option.key as keyof Filter)} />
 						</Pressable>
 					))}
 				</View>
 			</ScrollView>
 
 			<View className='px-4 pb-10 pt-3'>
-				<Button onPress={handleApply}>Apply filter</Button>
+				<Button onPress={handleSubmit(onSubmit)}>Apply filter</Button>
 			</View>
 		</View>
 	);

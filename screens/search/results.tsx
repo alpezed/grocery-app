@@ -10,17 +10,37 @@ import EmptyState from '@/components/empty-state';
 import ProductCard from '@/components/product-card';
 import { Colors } from '@/constants/theme';
 import { useProducts } from '@/lib/queries/products';
+import { Filter } from '@/schema/filter.schema';
 import { Product } from '@/schema/product.schema';
 import { useCartStore } from '@/store/use-cart';
 
 export default function SearchResultsScreen() {
-	const { query } = useLocalSearchParams<{ query: string }>();
+	const { query, filters } = useLocalSearchParams<{
+		query: string;
+		filters: string;
+	}>();
+	const parsedFilters = filters
+		? (JSON.parse(filters as string) as Filter)
+		: undefined;
 	const {
 		data: products,
 		status,
 		error,
 	} = useProducts({
 		name: query as string,
+		price: {
+			$gte: parsedFilters?.price?.min,
+			$lte: parsedFilters?.price?.max,
+		},
+		reviews: {
+			rating: {
+				$gte: parsedFilters?.rating,
+			},
+		},
+		freeShipping: { $eq: parsedFilters?.freeShipping },
+		// TODO: Add same day delivery and discount filters
+		// sameDayDelivery: parsedFilters.sameDayDelivery,
+		// discount: parsedFilters.discount,
 	});
 	const { user } = useUser();
 	const { addItem } = useCartStore();
@@ -55,7 +75,7 @@ export default function SearchResultsScreen() {
 	return (
 		<View className='flex-1 bg-background-light'>
 			<AppHeader
-				title={`Search: ${query.length >= 10 ? `${query?.substring(0, 10)}...` : query}`}
+				title={`${query ? (query.length >= 10 ? `Search: ${query?.substring(0, 10)}...` : `Search: ${query}`) : 'Search Results'}`}
 			/>
 			{products?.data.length === 0 && status !== 'pending' ? (
 				<EmptyState>
