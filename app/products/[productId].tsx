@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Image, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Text, View } from 'react-native';
 
 import { FavoriteButton } from '@/components/featured-products';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
@@ -8,13 +8,18 @@ import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
 import { strapiService } from '@/services/strapi';
+import { useCartStore } from '@/store/use-cart';
 import { useUser } from '@clerk/clerk-expo';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
+import Toast from 'react-native-toast-message';
 
 export default function ProductDetail() {
 	const { productId } = useLocalSearchParams<{ productId: string }>();
 	const { user } = useUser();
+	const { addItem } = useCartStore();
+	const [quantity, setQuantity] = useState(1);
 
 	const { data, status, error, refetch } = useQuery({
 		queryKey: ['product', productId],
@@ -24,7 +29,7 @@ export default function ProductDetail() {
 	if (status === 'pending') {
 		return (
 			<View className='flex-1 items-center justify-center'>
-				<ActivityIndicator />
+				<ActivityIndicator size='large' color={Colors.light.primaryDark} />
 			</View>
 		);
 	}
@@ -69,7 +74,7 @@ export default function ProductDetail() {
 						data?.favorites?.find(f => f.clerkId === user?.id)?.documentId
 					}
 					isFavorite={isFavorite}
-					className='w-6 h-6 top-0 right-0'
+					className='w-6 h-6 top-0 right-0 bg-transparent'
 				/>
 				<Text className='text-primary-dark font-sans-medium'>
 					{data?.price.toLocaleString('en-US', {
@@ -95,9 +100,15 @@ export default function ProductDetail() {
 				the outside of the lemon skin. Organic lemons are considered to be the
 				world&apos;s finest lemon for juicing
 			</Text>
-			<Quantity />
+			<Quantity productId={productId} setQuantity={setQuantity} />
 			<Button
-				onPress={() => Alert.alert('Product added to cart')}
+				onPress={() => {
+					addItem({ ...data, quantity });
+					Toast.show({
+						type: 'success',
+						text1: 'Added to cart',
+					});
+				}}
 				color='primary'
 				icon={
 					<Icon name='ShoppingBag' size={20} color={Colors.light.background} />

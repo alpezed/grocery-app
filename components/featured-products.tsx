@@ -52,7 +52,6 @@ export function FavoriteButton({
 		} else {
 			await markAsFavorite({ productId, userId: user.id });
 		}
-		console.log('invalidating product', productId);
 		queryClient.invalidateQueries({ queryKey: ['product', productId] });
 	};
 
@@ -76,7 +75,7 @@ export function FavoriteButton({
 }
 
 export default function FeaturesProducts() {
-	const { data: products, error, status } = useProducts();
+	const { data: products, error, status, refetch } = useProducts();
 	const { user } = useUser();
 	const { addItem } = useCartStore();
 

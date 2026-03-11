@@ -17,15 +17,15 @@ function ProfileItem({
 } & ComponentProps<typeof Pressable>) {
 	return (
 		<Pressable
-			style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-			className='flex-row items-center py-2'
+			style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+			className='flex-row items-center py-2 border-b border-border px-4 h-13'
 			{...props}
 		>
 			<Icon name={icon} size={20} color={Colors.light.primaryDark} />
 			<Text className='text-sm font-sans-medium ml-3'>{title}</Text>
 			{withArrow && (
 				<View className='ml-auto'>
-					<Icon name='ChevronRight' size={30} color={Colors.light.text} />
+					<Icon name='ChevronRight' size={24} color={Colors.light.text} />
 				</View>
 			)}
 		</Pressable>
@@ -76,7 +76,7 @@ export default function ProfileScreen() {
 					{user?.emailAddresses[0].emailAddress}
 				</Text>
 			</View>
-			<View className='px-9 mt-7.5'>
+			<View className='mx-6 mt-7.5 bg-white rounded-lg'>
 				<ProfileItem
 					icon='CircleUser'
 					title='About'
@@ -112,6 +112,8 @@ export default function ProfileScreen() {
 					title='Notifications'
 					onPress={() => router.push('/notifications')}
 				/>
+			</View>
+			<View className='mx-6 mt-7.5 bg-white rounded-lg'>
 				<LogoutButton />
 			</View>
 		</View>

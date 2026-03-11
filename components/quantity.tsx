@@ -1,15 +1,25 @@
 import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
 import { useQuantity } from '@/hooks/use-quantity';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
 const MAX_QUANTITY = 10;
 const MIN_QUANTITY = 1;
 
-export function Quantity() {
+export function Quantity({
+	productId,
+	setQuantity,
+}: {
+	productId: string;
+	setQuantity: (quantity: number) => void;
+}) {
 	const { localValue, handleDecrement, handleIncrement, handleChangeText } =
-		useQuantity();
+		useQuantity(productId);
+
+	useEffect(() => {
+		setQuantity(localValue);
+	}, [localValue]);
 
 	return (
 		<View className='flex-row justify-between items-center bg-white rounded h-12.5'>
