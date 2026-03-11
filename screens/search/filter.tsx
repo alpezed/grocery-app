@@ -26,13 +26,13 @@ function CheckCircle({ checked }: { checked: boolean }) {
 	return (
 		<View
 			className={`w-5 h-5 rounded-full justify-center items-center border-[1.5px] ${
-				checked ? 'bg-primary-dark border-primary-dark' : 'border-gray-300'
+				checked ? 'bg-primary-dark border-primary-dark' : 'border-text'
 			}`}
 		>
 			<Icon
 				name='Check'
 				size={12}
-				color={checked ? 'white' : '#d1d5dc'}
+				color={checked ? 'white' : Colors.light.text}
 				strokeWidth={3}
 			/>
 		</View>
