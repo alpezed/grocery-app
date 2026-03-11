@@ -29,7 +29,12 @@ function CheckCircle({ checked }: { checked: boolean }) {
 				checked ? 'bg-primary-dark border-primary-dark' : 'border-gray-300'
 			}`}
 		>
-			{checked && <Icon name='Check' size={14} color='white' />}
+			<Icon
+				name='Check'
+				size={12}
+				color={checked ? 'white' : '#d1d5dc'}
+				strokeWidth={3}
+			/>
 		</View>
 	);
 }
