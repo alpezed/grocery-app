@@ -80,8 +80,6 @@ export default function FeaturesProducts() {
 	const { user } = useUser();
 	const { addItem } = useCartStore();
 
-	console.log('products', products);
-
 	const renderProductItem = ({ item }: { item: Product }) => {
 		const isFavorite = item.favorites?.some(
 			favorite => favorite.clerkId === user?.id

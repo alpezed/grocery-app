@@ -11,14 +11,16 @@ export default function ProductCard({
 	favoriteId,
 	isFavorite,
 	onAddToCart,
+	className,
 }: {
 	product: Product;
 	favoriteId?: string;
 	isFavorite: boolean;
 	onAddToCart: () => void;
+	className?: string;
 }) {
 	return (
-		<View className='bg-background mb-3.5 w-[48%]'>
+		<View className={`bg-background mb-3.5 w-[48%] ${className}`}>
 			{/* {item.isNew && (
 					<View style={styles.newBadge}>
 						<Text style={styles.newBadgeText}>New</Text>

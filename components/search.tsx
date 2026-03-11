@@ -1,68 +1,27 @@
 import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
+import { useRouter } from 'expo-router';
 import React from 'react';
-import { Alert, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 export default function Search() {
+	const router = useRouter();
+
 	return (
-		<View style={styles.container}>
-			<View style={styles.iconContainer}>
+		<Pressable
+			onPress={() => router.push('/search')}
+			className='flex-row items-center w-full h-[50px] bg-background-light rounded-lg'
+			style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+		>
+			<View className='absolute z-10 top-0 bottom-0 left-5 justify-center items-center'>
 				<Icon name='Search' size={20} color={Colors.light.text} />
 			</View>
-			<TextInput
-				placeholder='Search products...'
-				placeholderTextColor={Colors.light.text}
-				style={styles.input}
-			/>
-			<Pressable
-				onPress={() => Alert.alert('Filter settings')}
-				style={({ pressed }) => [
-					styles.filterSettingsContainer,
-					{ opacity: pressed ? 0.5 : 1 },
-				]}
-			>
+			<Text className='font-sans text-text text-sm flex-1 pl-14'>
+				Search keywords..
+			</Text>
+			<View className='absolute z-10 top-0 bottom-0 right-5 justify-center items-center'>
 				<Icon name='SlidersHorizontal' size={20} color={Colors.light.text} />
-			</Pressable>
-		</View>
+			</View>
+		</Pressable>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 19,
-		width: '100%',
-		backgroundColor: Colors.light.backgroundLight,
-		borderRadius: 8,
-	},
-	input: {
-		fontFamily: 'Montserrat',
-		color: Colors.light.text,
-		backgroundColor: Colors.light.backgroundLight,
-		borderRadius: 8,
-		gap: 20,
-		height: 50,
-		paddingInline: 55,
-		paddingBlock: 10,
-		width: '100%',
-	},
-	iconContainer: {
-		position: 'absolute',
-		zIndex: 10,
-		top: 0,
-		bottom: 0,
-		left: 20,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	filterSettingsContainer: {
-		position: 'absolute',
-		zIndex: 10,
-		top: 0,
-		bottom: 0,
-		right: 20,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-});

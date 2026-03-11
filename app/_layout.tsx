@@ -83,10 +83,18 @@ export default function RootLayout() {
 							name='reviews/create'
 							options={{ headerShown: false, title: 'Create Review' }}
 						/>
-						<Stack.Screen
-							name='products/[productId]'
-							options={{ headerShown: false }}
-						/>
+					<Stack.Screen
+						name='products/[productId]'
+						options={{ headerShown: false }}
+					/>
+					<Stack.Screen
+						name='search/index'
+						options={{ headerShown: false }}
+					/>
+					<Stack.Screen
+						name='search/filter'
+						options={{ headerShown: false }}
+					/>
 						{!completed && <Stack.Screen name='onboarding' />}
 					</Stack>
 					<Toast config={toastConfig} position='bottom' />
