@@ -25,7 +25,7 @@ const FILTER_OPTIONS: FilterOption[] = [
 function CheckCircle({ checked }: { checked: boolean }) {
 	return (
 		<View
-			className={`w-5 h-5 rounded-full justify-center items-center border-[1.5px] ${
+			className={`w-5 h-5 rounded-full justify-center items-center border ${
 				checked ? 'bg-primary-dark border-primary-dark' : 'border-text'
 			}`}
 		>
