@@ -105,7 +105,7 @@ export default function ProfileScreen() {
 				<ProfileItem
 					icon='CircleDollarSign'
 					title='Transactions'
-					onPress={() => {}}
+					onPress={() => router.push('/transactions')}
 				/>
 				<ProfileItem
 					icon='Bell'
