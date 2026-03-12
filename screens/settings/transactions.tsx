@@ -1,8 +1,11 @@
 import AppHeader from '@/components/app-header';
+import EmptyState from '@/components/empty-state';
 import { Colors } from '@/constants/theme';
 import { useTransactions } from '@/hooks/use-transactions';
 import { format, fromUnixTime } from 'date-fns';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
+import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native';
 import { PaymentIcon } from 'react-native-payment-card-icons';
 
 export const getTransactionIcon = (brand: string) => {
@@ -33,12 +36,32 @@ export const getTransactionIcon = (brand: string) => {
 };
 
 export default function TransactionsScreen() {
-	const { data: transactions, status } = useTransactions();
+	const router = useRouter();
+	const { data: transactions, status, error } = useTransactions();
+
+	useEffect(() => {
+		if (error) {
+			Alert.alert('Error', 'Failed to fetch transactions');
+		}
+	}, [error, router]);
 
 	return (
 		<View className='flex-1'>
 			<AppHeader title='Transactions' />
 			<View className='flex-1'>
+				{status === 'error' && (
+					<EmptyState>
+						<EmptyState.Icon
+							icon='TriangleAlert'
+							size={120}
+							color={Colors.light.accentRed}
+						/>
+						<EmptyState.Title>Error fetching transactions</EmptyState.Title>
+						<EmptyState.Description>
+							Please try again later
+						</EmptyState.Description>
+					</EmptyState>
+				)}
 				{status === 'pending' && (
 					<View className='flex-1 justify-center gap-4 px-4 py-8'>
 						<ActivityIndicator size='large' color={Colors.light.primaryDark} />

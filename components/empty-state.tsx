@@ -27,7 +27,7 @@ export const EmptyStateIcon = ({
 	icon,
 	size,
 	color = Colors.light.primaryDark,
-	strokeWidth = 1,
+	strokeWidth = 1.2,
 }: {
 	icon: ComponentProps<typeof Icon>['name'];
 	size?: ComponentProps<typeof Icon>['size'];

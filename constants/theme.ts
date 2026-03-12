@@ -27,6 +27,7 @@ export const Colors = {
 		badgeText: '#E8AD41',
 		badgeBg: '#FDEFD5',
 		rating: '#FFC107',
+		accentRed: '#EF574B',
 	},
 	dark: {
 		text: '#868889',
@@ -46,6 +47,7 @@ export const Colors = {
 		badgeText: '#E8AD41',
 		badgeBg: '#FDEFD5',
 		rating: '#FFC107',
+		accentRed: '#EF574B',
 	},
 };
 
