@@ -43,7 +43,6 @@
         "react-native": "0.81.5",
         "react-native-gesture-handler": "~2.28.0",
         "react-native-payment-card-icons": "^1.0.3",
-        "react-native-payment-icons": "^1.0.11",
         "react-native-reanimated": "~4.1.1",
         "react-native-safe-area-context": "~5.6.0",
         "react-native-screens": "~4.16.0",
@@ -1746,8 +1745,6 @@
     "react-native-is-edge-to-edge": ["react-native-is-edge-to-edge@1.2.1", "", { "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-FLbPWl/MyYQWz+KwqOZsSyj2JmLKglHatd3xLZWskXOpRaio4LfEDEz8E/A6uD8QoTHW6Aobw1jbEwK7KMgR7Q=="],
 
     "react-native-payment-card-icons": ["react-native-payment-card-icons@1.0.3", "", { "dependencies": { "react-native-svg": "*" }, "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-NuKrH4tA1Qj4NbpJowplIAEBiLa9C6GS48tJ+wWxozpV9m789iULTQ+1X5a0r00d5mqdGp+Pt3Zk5C3EhSN8dQ=="],
-
-    "react-native-payment-icons": ["react-native-payment-icons@1.0.11", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-svg": "*" } }, "sha512-HY/g704+J25tLtjNfsQBiYF8OLtbPSaLN4ZY3quSJahRD+Zo1d8rd1cszeXSRb7WJYBNRJ2VDhH8mk2yhVByNQ=="],
 
     "react-native-reanimated": ["react-native-reanimated@4.1.6", "", { "dependencies": { "react-native-is-edge-to-edge": "^1.2.1", "semver": "7.7.2" }, "peerDependencies": { "@babel/core": "^7.0.0-0", "react": "*", "react-native": "*", "react-native-worklets": ">=0.5.0" } }, "sha512-F+ZJBYiok/6Jzp1re75F/9aLzkgoQCOh4yxrnwATa8392RvM3kx+fiXXFvwcgE59v48lMwd9q0nzF1oJLXpfxQ=="],
 

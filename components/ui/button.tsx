@@ -9,15 +9,17 @@ export function Button({
 	onPress,
 	color = 'primary',
 	disabled = false,
+	className,
 }: {
 	icon?: React.ReactNode;
 	children: React.ReactNode;
 	onPress: () => void;
 	color?: 'primary' | 'white';
 	disabled?: boolean;
+	className?: string;
 }) {
 	return (
-		<View style={styles.shadowContainer}>
+		<View style={styles.shadowContainer} className={className}>
 			<Pressable
 				onPress={onPress}
 				style={({ pressed }) => [
