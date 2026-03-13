@@ -84,7 +84,7 @@ export default function ProfileScreen() {
 				/>
 				<ProfileItem
 					icon='Package'
-					title='Orders'
+					title='My Orders'
 					onPress={() => router.push('/orders')}
 				/>
 				<ProfileItem

@@ -55,19 +55,15 @@ export default function CartScreen() {
 			{items.length > 0 ? (
 				<View className='flex-1'>
 					<ProductList products={items} />
-					<View className='px-4 py-6 bg-white rounded-tl-3xl rounded-tr-3xl gap-4 shadow-[0px_0px_30px_0px_rgba(0,0,0,0.05)]'>
+					<View className='px-4 pt-6 pb-12 bg-white rounded-tl-3xl rounded-tr-3xl gap-4'>
 						<View className='gap-2'>
 							<View className='flex-row justify-between items-center'>
 								<Text className='text-text font-medium'>Subtotal</Text>
-								<Text className='text-text font-medium'>
-									${subtotal.toFixed(2)}
-								</Text>
+								<Text className='font-medium'>${subtotal.toFixed(2)}</Text>
 							</View>
 							<View className='flex-row justify-between items-center'>
 								<Text className='text-text font-medium'>Shipping charges</Text>
-								<Text className='text-text font-medium'>
-									${shipping.toFixed(2)}
-								</Text>
+								<Text className='font-medium'>${shipping.toFixed(2)}</Text>
 							</View>
 						</View>
 						<View className='w-full h-px bg-border' />
