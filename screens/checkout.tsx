@@ -1,10 +1,8 @@
+import { StripeProvider } from '@stripe/stripe-react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, Text, TouchableOpacity, View } from 'react-native';
 
-import ApplePay from '@/assets/icons/apple.svg';
-import CreditCard from '@/assets/icons/credit-card.svg';
-import Paypal from '@/assets/icons/paypal.svg';
 import AppHeader from '@/components/app-header';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
@@ -12,6 +10,7 @@ import { Stepper } from '@/components/ui/stepper';
 import { Colors } from '@/constants/theme';
 import { useGetAddresses } from '@/lib/queries/addresses';
 import { Address } from '@/schema/address.schema';
+import PaymentScreen from '@/screens/payment';
 import { SvgProps } from 'react-native-svg';
 
 const steps = [
@@ -49,24 +48,6 @@ const shippingMethods: ShippingMethod[] = [
 		description:
 			'Order will be delivered the next business day to your doorstep.',
 		price: 10,
-	},
-];
-
-const paymentMethods: PaymentMethod[] = [
-	{
-		id: 'paypal',
-		title: 'Paypal',
-		icon: Paypal,
-	},
-	{
-		id: 'credit-card',
-		title: 'Credit Card',
-		icon: CreditCard,
-	},
-	{
-		id: 'apple-pay',
-		title: 'Apple Pay',
-		icon: ApplePay,
 	},
 ];
 
@@ -126,26 +107,6 @@ function ActiveAddressCard({ address }: { address: Address }) {
 	);
 }
 
-function PaymentMethodCard({
-	paymentMethod,
-}: {
-	paymentMethod: PaymentMethod;
-}) {
-	return (
-		<TouchableOpacity
-			activeOpacity={0.8}
-			className='bg-white flex-1 p-4 rounded-sm border gap-2 border-transparent items-center justify-center shadow-xl/5'
-		>
-			<View className='flex-row items-center gap-2'>
-				<paymentMethod.icon color={Colors.light.text} />
-			</View>
-			<Text className='text-xs text-text font-medium capitalize'>
-				{paymentMethod.title}
-			</Text>
-		</TouchableOpacity>
-	);
-}
-
 export default function CheckoutScreen() {
 	const [currentStep, setCurrentStep] = useState(0);
 	const [selectedShippingMethod, setSelectedShippingMethod] =
@@ -174,59 +135,57 @@ export default function CheckoutScreen() {
 	const selectedAddress = addresses?.[0];
 
 	return (
-		<View className='flex-1'>
-			<AppHeader title='Checkout' />
-			<View className='flex-1 px-6'>
-				<View className='w-[95%] mx-auto mt-6'>
-					<Stepper steps={steps} currentStepIndex={currentStep} />
-				</View>
+		<StripeProvider
+			publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUB_KEY!}
+			merchantIdentifier='merchant.com.groceryapp'
+		>
+			<View className='flex-1'>
+				<AppHeader title='Checkout' />
+				<View className='flex-1 px-6'>
+					<View className='w-[95%] mx-auto mt-6'>
+						<Stepper steps={steps} currentStepIndex={currentStep} />
+					</View>
 
-				{currentStep === 0 && (
-					<View className='gap-4'>
-						{shippingMethods.map(shippingMethod => (
-							<ShippingMethodCard
-								shippingMethod={shippingMethod}
-								isActive={selectedShippingMethod?.id === shippingMethod.id}
-								key={shippingMethod.id}
-								onPress={() => setSelectedShippingMethod(shippingMethod)}
-							/>
-						))}
-					</View>
-				)}
-				{currentStep === 1 && (
-					<View className='gap-4'>
-						{selectedAddress && <ActiveAddressCard address={selectedAddress} />}
-					</View>
-				)}
-				{currentStep === 2 && (
-					<View className='gap-3 flex-row'>
-						{paymentMethods.map(paymentMethod => (
-							<PaymentMethodCard
-								paymentMethod={paymentMethod}
-								key={paymentMethod.id}
-							/>
-						))}
-					</View>
-				)}
+					{currentStep === 0 && (
+						<View className='gap-4'>
+							{shippingMethods.map(shippingMethod => (
+								<ShippingMethodCard
+									shippingMethod={shippingMethod}
+									isActive={selectedShippingMethod?.id === shippingMethod.id}
+									key={shippingMethod.id}
+									onPress={() => setSelectedShippingMethod(shippingMethod)}
+								/>
+							))}
+						</View>
+					)}
+					{currentStep === 1 && (
+						<View className='gap-4'>
+							{selectedAddress && (
+								<ActiveAddressCard address={selectedAddress} />
+							)}
+						</View>
+					)}
+					{currentStep === 2 && <PaymentScreen />}
 
-				<View className='mt-auto mb-8 gap-3 flex-row'>
-					{!isFirstStep && (
-						<Button onPress={handlePrevious} color='white' className='flex-1'>
-							Previous
-						</Button>
-					)}
-					{!isLastStep && (
-						<Button onPress={handleNext} className='flex-1'>
-							Next
-						</Button>
-					)}
-					{isLastStep && (
-						<Button onPress={onSubmit} className='flex-1'>
-							Place Order
-						</Button>
-					)}
+					<View className='mt-auto mb-8 gap-3 flex-row'>
+						{!isFirstStep && (
+							<Button onPress={handlePrevious} color='white' className='flex-1'>
+								Previous
+							</Button>
+						)}
+						{!isLastStep && (
+							<Button onPress={handleNext} className='flex-1'>
+								Next
+							</Button>
+						)}
+						{isLastStep && (
+							<Button onPress={onSubmit} className='flex-1'>
+								Place Order
+							</Button>
+						)}
+					</View>
 				</View>
 			</View>
-		</View>
+		</StripeProvider>
 	);
 }
