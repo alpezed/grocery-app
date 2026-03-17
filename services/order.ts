@@ -30,9 +30,19 @@ export async function updateOrder(
 
 export async function getOrders(): Promise<StrapiCollectionResponse<Order>> {
 	const response = await orders.find({
-		populate: ['items'],
+		populate: ['items', 'timeline'],
 		sort: ['createdAt:desc'],
+		// filters: {
+		// 	clerkId: clerkId,
+		// },
 	});
 
 	return response as StrapiCollectionResponse<Order>;
+}
+
+export async function getOrderById(id: string): Promise<APIResponse<Order>> {
+	const response = await strapiApi.single('orders').find(id, {
+		populate: ['items', 'timeline'],
+	});
+	return response as APIResponse<Order>;
 }

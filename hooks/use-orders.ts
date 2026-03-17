@@ -1,21 +1,6 @@
-import { type CreateOrderBody } from '@/schema/order.schema';
-import { createOrder, getOrders, updateOrder } from '@/services/order';
+import { Order, type CreateOrderBody } from '@/schema/order.schema';
+import { getOrderById, getOrders, updateOrder } from '@/services/order';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-
-export const useCreateOrder = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationKey: ['create-order'],
-		mutationFn: (order: CreateOrderBody[]) => createOrder(order),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['orders'] });
-		},
-		onError: error => {
-			console.error(error);
-		},
-	});
-};
 
 export const useUpdateOrder = (orderId: string) => {
 	const queryClient = useQueryClient();
@@ -35,6 +20,22 @@ export const useUpdateOrder = (orderId: string) => {
 export const useGetOrders = () => {
 	return useQuery({
 		queryKey: ['orders'],
-		queryFn: () => getOrders(),
+		queryFn: getOrders,
+	});
+};
+
+export const useGetOrderById = (orderId: string) => {
+	return useQuery({
+		queryKey: ['order', orderId],
+		queryFn: () => getOrderById(orderId),
+		enabled: !!orderId,
+		refetchInterval: query => {
+			const order = query.state.data?.data as Order;
+			if (!order) return false;
+			if (order.orderStatus === 'delivered') return false;
+			return 1000;
+		},
+		// Keep showing old data while fetching new data to prevent flickering
+		placeholderData: previousData => previousData,
 	});
 };

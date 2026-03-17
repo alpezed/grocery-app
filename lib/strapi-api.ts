@@ -50,13 +50,16 @@ async function fetchAPI<T>(
 
 function single(singularApiId: string) {
 	return {
-		find: <T>(options?: QueryOptions) => fetchAPI<T>(singularApiId, options),
+		find: <T>(id: string, options?: QueryOptions) =>
+			fetchAPI<T>(`${singularApiId}/${id}`, options),
 	};
 }
 
 function collection(pluralApiId: string) {
 	return {
 		find: <T>(options?: QueryOptions) => fetchAPI<T>(pluralApiId, options),
+		findOne: <T>(id: string, options?: QueryOptions) =>
+			fetchAPI<T>(`${pluralApiId}/${id}`, options),
 		create: <T>(data: Record<string, any>) =>
 			fetchAPI<T>(pluralApiId, {
 				method: 'POST',

@@ -18,15 +18,19 @@ export const orderSchema = z.object({
 	price: z.number(),
 	quantity: z.number(),
 	stripePaymentIntentId: z.string(),
-	timelineEvents: z.any(),
+	timeline: z.record(z.string(), z.string().nullable()),
 	orderStatus: z.enum([
 		'placed',
 		'confirmed',
 		'shipped',
-		'out_for_delivery',
+		'outForDelivery',
 		'delivered',
 	]),
-	items: z.array(createOrderItemsBodySchema),
+	items: z.array(
+		createOrderItemsBodySchema.extend({
+			id: z.number(),
+		})
+	),
 	createdAt: z.coerce.date(),
 	updatedAt: z.coerce.date(),
 	publishedAt: z.coerce.date(),

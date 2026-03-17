@@ -6,49 +6,32 @@
 import { Platform } from 'react-native';
 
 const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+
+const colorOptions = {
+	text: '#868889',
+	background: '#fff',
+	backgroundLight: '#F4F5F9',
+	backgroundDark: '#F5F5F5',
+	tint: tintColorLight,
+	icon: '#687076',
+	tabIconDefault: '#687076',
+	tabIconSelected: tintColorLight,
+	primary: '#AEDC81',
+	primaryDark: '#6CC51D',
+	primaryLight: '#EBFFD7',
+	border: '#EBEBEB',
+	link: '#407EC7',
+	heart: '#FE585A',
+	badgeText: '#E8AD41',
+	badgeBg: '#FDEFD5',
+	rating: '#FFC107',
+	accentRed: '#EF574B',
+	trackIcon: '#28B446',
+};
 
 export const Colors = {
-	light: {
-		text: '#868889',
-		background: '#fff',
-		backgroundLight: '#F4F5F9',
-		backgroundDark: '#F5F5F5',
-		tint: tintColorLight,
-		icon: '#687076',
-		tabIconDefault: '#687076',
-		tabIconSelected: tintColorLight,
-		primary: '#AEDC81',
-		primaryDark: '#6CC51D',
-		primaryLight: '#EBFFD7',
-		border: '#EBEBEB',
-		link: '#407EC7',
-		heart: '#FE585A',
-		badgeText: '#E8AD41',
-		badgeBg: '#FDEFD5',
-		rating: '#FFC107',
-		accentRed: '#EF574B',
-	},
-	dark: {
-		text: '#868889',
-		background: '#fff',
-		backgroundLight: '#F4F5F9',
-		backgroundDark: '#F5F5F5',
-		tint: tintColorDark,
-		icon: '#9BA1A6',
-		tabIconDefault: '#9BA1A6',
-		tabIconSelected: tintColorDark,
-		primary: '#AEDC81',
-		primaryDark: '#6CC51D',
-		primaryLight: '#EBFFD7',
-		border: '#EBEBEB',
-		link: '#407EC7',
-		heart: '#FE585A',
-		badgeText: '#E8AD41',
-		badgeBg: '#FDEFD5',
-		rating: '#FFC107',
-		accentRed: '#EF574B',
-	},
+	light: colorOptions,
+	dark: colorOptions,
 };
 
 export const Fonts = Platform.select({
