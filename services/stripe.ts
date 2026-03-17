@@ -1,11 +1,18 @@
-export const createPaymentIntent = async ({ amount }: { amount: number }) => {
+export const createPaymentIntent = async ({
+	orderId,
+	clerkId,
+}: {
+	orderId: string;
+	clerkId: string;
+}) => {
 	const response = await fetch(`/api/payment-sheet`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify({
-			amount,
+			orderId,
+			clerkId,
 		}),
 	});
 

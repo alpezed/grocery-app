@@ -3,7 +3,7 @@ import {
 	PlatformPay,
 	useStripe,
 } from '@stripe/stripe-react-native';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 
@@ -11,8 +11,11 @@ import ApplePay from '@/assets/icons/apple.svg';
 import CreditCard from '@/assets/icons/credit-card.svg';
 import Paypal from '@/assets/icons/paypal.svg';
 import { Colors } from '@/constants/theme';
+import { Order } from '@/schema/order.schema';
+import { createOrder } from '@/services/order';
 import { createPaymentIntent } from '@/services/stripe';
 import { useCartStore } from '@/store/use-cart';
+import { useUser } from '@clerk/clerk-expo';
 import { useMutation } from '@tanstack/react-query';
 
 type PaymentMethod = {
@@ -64,19 +67,32 @@ function PaymentMethodCard({
 
 export default function PaymentScreen() {
 	const { items } = useCartStore();
+	const { user } = useUser();
 
-	const cartItems = items.map(item => ({
-		label: item.name,
-		amount: item.price.toString(),
-		paymentType: PlatformPay.PaymentType.Immediate,
-	}));
+	const { initPaymentSheet, presentPaymentSheet, confirmPlatformPayPayment } =
+		useStripe();
 
-	const {
-		initPaymentSheet,
-		presentPaymentSheet,
-		confirmPaymentSheetPayment,
-		confirmPlatformPayPayment,
-	} = useStripe();
+	const createOrderMutation = useMutation({
+		mutationFn: async (): Promise<Order> => {
+			const cartItems = items?.map(item => ({
+				productId: item.documentId,
+				priceAtPurchase: item.price,
+				quantity: item.quantity,
+			}));
+			return await createOrder(cartItems);
+		},
+		onSuccess: data => {
+			console.log('--createOrderMutation', { data });
+			if (!user?.id) {
+				Alert.alert('Error', 'User not found');
+				return;
+			}
+			paymentIntentMutation.mutateAsync({
+				clerkId: user?.id,
+				orderId: data.documentId,
+			});
+		},
+	});
 
 	const paymentIntentMutation = useMutation({
 		mutationFn: createPaymentIntent,
@@ -132,10 +148,10 @@ export default function PaymentScreen() {
 			});
 
 			if (error) {
-				// handle error
-				console.log('--error', error);
 				Alert.alert('Error', error.message);
 			}
+
+			openPaymentSheet();
 		},
 		onError: error => {
 			console.log('error', error);
@@ -147,11 +163,17 @@ export default function PaymentScreen() {
 		onSuccess: async data => {
 			const { paymentIntent: clientSecret } = data;
 
+			const appleCartItems = items.map(item => ({
+				label: item.name,
+				amount: item.price.toString(),
+				paymentType: PlatformPay.PaymentType.Immediate,
+			}));
+
 			const { error, paymentIntent } = await confirmPlatformPayPayment(
 				clientSecret,
 				{
 					applePay: {
-						cartItems: cartItems as PlatformPay.CartSummaryItem[],
+						cartItems: appleCartItems as PlatformPay.CartSummaryItem[],
 						merchantCountryCode: 'US',
 						currencyCode: 'USD',
 						// requiredShippingAddressFields: [
@@ -176,13 +198,13 @@ export default function PaymentScreen() {
 		},
 	});
 
-	const setupPaymentSheet = useCallback(async () => {
-		paymentIntentMutation.mutateAsync({ amount: 8 });
-	}, [paymentIntentMutation]);
+	// const setupPaymentSheet = useCallback(async () => {
+	// 	paymentIntentMutation.mutateAsync({ amount: 8 });
+	// }, [paymentIntentMutation]);
 
-	useEffect(() => {
-		setupPaymentSheet();
-	}, []);
+	// useEffect(() => {
+	// 	setupPaymentSheet();
+	// }, []);
 
 	const openPaymentSheet = useCallback(async () => {
 		const { error } = await presentPaymentSheet();
@@ -197,13 +219,18 @@ export default function PaymentScreen() {
 	const onPaymentMethodPress = useCallback(
 		async (paymentMethodId: string) => {
 			console.log({ paymentMethodId });
+			if (!user?.id) {
+				Alert.alert('Error', 'User not found');
+				return;
+			}
 			if (paymentMethodId === 'apple-pay') {
-				await applePayMutation.mutateAsync({ amount: 8 });
+				await applePayMutation.mutateAsync({ clerkId: user?.id, orderId: '1' });
 			} else if (paymentMethodId === 'credit-card') {
-				openPaymentSheet();
+				const data = await createOrderMutation.mutateAsync();
+				console.log('--data', data);
 			}
 		},
-		[applePayMutation, openPaymentSheet]
+		[applePayMutation, createOrderMutation, user?.id]
 	);
 
 	return (

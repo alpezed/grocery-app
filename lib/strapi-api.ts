@@ -16,18 +16,28 @@ interface QueryOptions {
 
 async function fetchAPI<T>(
 	endpoint: string,
-	options?: QueryOptions
+	options?: QueryOptions & {
+		method?: 'POST' | 'GET' | 'PUT' | 'DELETE';
+		data?: Record<string, any>;
+	}
 ): Promise<T> {
 	const url = new URL(`/api/${endpoint}`, BASE_URL);
 	if (options) {
 		url.search = qs.stringify(options, { encode: false });
 	}
 
-	const response = await fetch(url.href, {
+	const fetchOptions: RequestInit = {
 		headers: {
 			'Content-Type': 'application/json',
 		},
-	});
+		method: options?.method || 'GET',
+	};
+
+	if (options?.method === 'POST' || options?.method === 'PUT') {
+		fetchOptions.body = JSON.stringify({ data: options?.data });
+	}
+
+	const response = await fetch(url.href, fetchOptions);
 
 	if (!response.ok) {
 		const text = await response.text();
@@ -47,6 +57,16 @@ function single(singularApiId: string) {
 function collection(pluralApiId: string) {
 	return {
 		find: <T>(options?: QueryOptions) => fetchAPI<T>(pluralApiId, options),
+		create: <T>(data: Record<string, any>) =>
+			fetchAPI<T>(pluralApiId, {
+				method: 'POST',
+				data,
+			}),
+		update: <T>(id: string, data: Record<string, any>) =>
+			fetchAPI<T>(`${pluralApiId}/${id}`, {
+				method: 'PUT',
+				data,
+			}),
 	};
 }
 

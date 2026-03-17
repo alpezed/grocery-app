@@ -1,3 +1,4 @@
+import { getOrders, updateOrder } from '@/services/order';
 import Stripe from 'stripe';
 
 export async function POST(request: Request) {
@@ -31,13 +32,42 @@ export async function POST(request: Request) {
 			{ apiVersion: '2020-08-27' }
 		);
 
-		const { amount } = body;
+		const { orderId, clerkId } = body;
+
+		console.log('orderId', orderId);
+
+		const orders = await getOrders();
+		const order = orders.data.find(order => order.documentId === orderId);
+		if (!order) {
+			return new Response(JSON.stringify({ error: 'Order not found' }), {
+				status: 404,
+				headers: { 'Content-Type': 'application/json' },
+			});
+		}
+
+		console.log('--order', order);
+
+		const totalAmount = order.items?.reduce(
+			(sum, item) => sum + item.priceAtPurchase * item.quantity,
+			0
+		);
+
+		// console.log('totalAmount', totalAmount);
+		// console.log('orders', orders);
 
 		const paymentIntent = await stripe.paymentIntents.create({
-			amount: Math.round(amount * 100),
+			amount: Math.round(totalAmount * 100),
 			currency: 'usd',
 			customer: customer.id,
 			payment_method_types: ['card'],
+			metadata: {
+				orderId,
+			},
+		});
+
+		await updateOrder(orderId, {
+			clerkId,
+			stripePaymentIntentId: paymentIntent.id,
 		});
 
 		return new Response(
