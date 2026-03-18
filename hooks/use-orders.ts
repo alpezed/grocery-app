@@ -9,7 +9,8 @@ export const useUpdateOrder = (orderId: string) => {
 
 	return useMutation({
 		mutationKey: ['update-order'],
-		mutationFn: (order: CreateOrderBody) => updateOrder(orderId, order),
+		mutationFn: (input: Partial<CreateOrderBody>) =>
+			updateOrder(orderId, input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['orders'] });
 		},

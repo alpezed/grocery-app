@@ -10,6 +10,14 @@ export const createOrderItemsBodySchema = z.object({
 export const createOrderBodySchema = z.object({
 	clerkId: z.string(),
 	stripePaymentIntentId: z.string(),
+	orderStatus: z.enum([
+		'placed',
+		'confirmed',
+		'shipped',
+		'outForDelivery',
+		'delivered',
+		'cancelled',
+	]),
 });
 
 export const orderSchema = z.object({

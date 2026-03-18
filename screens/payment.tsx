@@ -11,6 +11,7 @@ import ApplePay from '@/assets/icons/apple.svg';
 import CreditCard from '@/assets/icons/credit-card.svg';
 import Paypal from '@/assets/icons/paypal.svg';
 import { Colors } from '@/constants/theme';
+import { useUpdateOrder } from '@/hooks/use-orders';
 import { Order } from '@/schema/order.schema';
 import { createOrder } from '@/services/order';
 import { createPaymentIntent } from '@/services/stripe';
@@ -71,6 +72,7 @@ export default function PaymentScreen() {
 	const { user } = useUser();
 	const router = useRouter();
 	const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
+	const updateOrderMutation = useUpdateOrder(currentOrderId!);
 
 	const { initPaymentSheet, presentPaymentSheet, confirmPlatformPayPayment } =
 		useStripe();
@@ -113,13 +115,15 @@ export default function PaymentScreen() {
 				paymentMethodOrder: ['apple-pay', 'paypal'],
 				appearance: {
 					colors: {
+						background: Colors.light.backgroundLight,
 						primary: Colors.light.primaryDark,
+						componentBorder: Colors.light.border,
 					},
 					shapes: {
-						borderRadius: 10,
+						borderRadius: 5,
 					},
 					font: {
-						family: 'Montserrat',
+						family: 'Montserrat-SemiBold',
 					},
 					primaryButton: {
 						colors: {
@@ -135,10 +139,11 @@ export default function PaymentScreen() {
 							},
 						},
 						font: {
-							family: 'Montserrat-SemiBold',
+							family: 'Montserrat-Bold',
 						},
 						shapes: {
-							height: 48,
+							height: 52,
+							borderRadius: 10,
 						},
 					},
 				},
@@ -204,6 +209,13 @@ export default function PaymentScreen() {
 	const openPaymentSheet = useCallback(async () => {
 		const { error } = await presentPaymentSheet();
 
+		if (error?.code === 'Canceled') {
+			updateOrderMutation.mutate({
+				clerkId: user?.id!,
+				orderStatus: 'cancelled',
+			});
+		}
+
 		if (error) {
 			Alert.alert(`Error code: ${error.code}`, error.message);
 		} else {
@@ -220,7 +232,6 @@ export default function PaymentScreen() {
 
 	const onPaymentMethodPress = useCallback(
 		async (paymentMethodId: string) => {
-			console.log({ paymentMethodId });
 			if (!user?.id) {
 				Alert.alert('Error', 'User not found');
 				return;
@@ -228,8 +239,7 @@ export default function PaymentScreen() {
 			if (paymentMethodId === 'apple-pay') {
 				await applePayMutation.mutateAsync({ clerkId: user?.id, orderId: '1' });
 			} else if (paymentMethodId === 'credit-card') {
-				const data = await createOrderMutation.mutateAsync();
-				console.log('--data', data);
+				await createOrderMutation.mutateAsync();
 			}
 		},
 		[applePayMutation, createOrderMutation, user?.id]
