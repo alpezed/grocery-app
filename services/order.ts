@@ -13,7 +13,7 @@ export async function createOrder(order: CreateOrderItemsBody[]) {
 	const response = await orders.create({
 		orderStatus: 'placed',
 		timeline: {
-			orderPlaced: new Date().toISOString(),
+			placed: new Date().toISOString(),
 		},
 		items: order,
 	});
@@ -28,13 +28,15 @@ export async function updateOrder(
 	return response as Order;
 }
 
-export async function getOrders(): Promise<StrapiCollectionResponse<Order>> {
+export async function getOrders(
+	clerkId: string
+): Promise<StrapiCollectionResponse<Order>> {
 	const response = await orders.find({
 		populate: ['items', 'timeline'],
 		sort: ['createdAt:desc'],
-		// filters: {
-		// 	clerkId: clerkId,
-		// },
+		filters: {
+			clerkId: clerkId,
+		},
 	});
 
 	return response as StrapiCollectionResponse<Order>;

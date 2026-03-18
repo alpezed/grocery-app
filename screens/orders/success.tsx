@@ -1,11 +1,14 @@
 import AppHeader from '@/components/app-header';
 import EmptyState from '@/components/empty-state';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View } from 'react-native';
 
 export default function OrderSuccessScreen() {
 	const router = useRouter();
+	const { orderId } = useLocalSearchParams<{ orderId: string }>();
+
+	console.log({ orderId });
 
 	return (
 		<View className='flex-1'>
@@ -20,7 +23,18 @@ export default function OrderSuccessScreen() {
 						</EmptyState.Description>
 					</View>
 				</EmptyState>
-				<Button onPress={() => router.push('/')}>Track Your Order</Button>
+				<Button
+					onPress={() =>
+						router.push({
+							pathname: '/orders/[orderId]',
+							params: {
+								orderId: orderId,
+							},
+						})
+					}
+				>
+					Track Your Order
+				</Button>
 			</View>
 		</View>
 	);

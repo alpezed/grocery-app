@@ -27,7 +27,7 @@ export default function OrderItem({ order }: { order: Order }) {
 	const currentStatus = STEPS.find(s => s.key === order.orderStatus);
 
 	return (
-		<View className='bg-white'>
+		<View className='bg-white mb-4'>
 			<View className='flex-row items-center gap-3 px-4 py-7 border-b border-border'>
 				<View className='w-16 h-16 bg-primary-light rounded-full items-center justify-center'>
 					<Icon name='Box' size={32} color={Colors.light.primaryDark} />

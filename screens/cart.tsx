@@ -1,17 +1,18 @@
 import { useNavigation, useRouter } from 'expo-router';
 import React, { useLayoutEffect } from 'react';
-import { Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 import AppHeader from '@/components/app-header';
 import EmptyState from '@/components/empty-state';
 import { ProductList } from '@/components/product-list';
 import { Button } from '@/components/ui/button';
+import { Icon } from '@/components/ui/icon';
 import { useCartStore } from '@/store/use-cart';
 
 export default function CartScreen() {
 	const router = useRouter();
 	const navigation = useNavigation();
-	const { items } = useCartStore();
+	const { items, clear: clearCart } = useCartStore();
 
 	const subtotal = items.reduce(
 		(acc, item) => acc + item.price * (item.quantity ?? 1),
@@ -32,6 +33,13 @@ export default function CartScreen() {
 			});
 	}, [navigation, items]);
 
+	const onClearCart = () => {
+		Alert.alert('Clear Cart', 'Are you sure you want to clear your cart?', [
+			{ text: 'Cancel', style: 'cancel' },
+			{ text: 'Clear', onPress: () => clearCart() },
+		]);
+	};
+
 	const renderEmptyState = () => {
 		return (
 			<View className='flex-1 justify-center gap-4 px-4 py-8'>
@@ -51,7 +59,14 @@ export default function CartScreen() {
 
 	return (
 		<View className='flex-1 bg-background-light'>
-			<AppHeader title='Shopping Cart' />
+			<AppHeader
+				title='Shopping Cart'
+				headerRight={
+					<Pressable onPress={onClearCart}>
+						<Icon name='RotateCcw' size={22} />
+					</Pressable>
+				}
+			/>
 			{items.length > 0 ? (
 				<View className='flex-1'>
 					<ProductList products={items} />

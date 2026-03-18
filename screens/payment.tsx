@@ -3,7 +3,7 @@ import {
 	PlatformPay,
 	useStripe,
 } from '@stripe/stripe-react-native';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 
@@ -17,6 +17,7 @@ import { createPaymentIntent } from '@/services/stripe';
 import { useCartStore } from '@/store/use-cart';
 import { useUser } from '@clerk/clerk-expo';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 
 type PaymentMethod = {
 	id: string;
@@ -51,7 +52,7 @@ function PaymentMethodCard({
 }) {
 	return (
 		<TouchableOpacity
-			activeOpacity={0.8}
+			activeOpacity={0.6}
 			className='bg-white flex-1 p-4 rounded-sm border gap-2 border-transparent items-center justify-center shadow-xl/5'
 			onPress={onPress}
 		>
@@ -66,8 +67,10 @@ function PaymentMethodCard({
 }
 
 export default function PaymentScreen() {
-	const { items } = useCartStore();
+	const { items, clear: clearCart } = useCartStore();
 	const { user } = useUser();
+	const router = useRouter();
+	const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
 
 	const { initPaymentSheet, presentPaymentSheet, confirmPlatformPayPayment } =
 		useStripe();
@@ -82,11 +85,11 @@ export default function PaymentScreen() {
 			return await createOrder(cartItems);
 		},
 		onSuccess: data => {
-			console.log('--createOrderMutation', { data });
 			if (!user?.id) {
 				Alert.alert('Error', 'User not found');
 				return;
 			}
+			setCurrentOrderId(data.documentId);
 			paymentIntentMutation.mutateAsync({
 				clerkId: user?.id,
 				orderId: data.documentId,
@@ -198,23 +201,22 @@ export default function PaymentScreen() {
 		},
 	});
 
-	// const setupPaymentSheet = useCallback(async () => {
-	// 	paymentIntentMutation.mutateAsync({ amount: 8 });
-	// }, [paymentIntentMutation]);
-
-	// useEffect(() => {
-	// 	setupPaymentSheet();
-	// }, []);
-
 	const openPaymentSheet = useCallback(async () => {
 		const { error } = await presentPaymentSheet();
 
 		if (error) {
 			Alert.alert(`Error code: ${error.code}`, error.message);
 		} else {
-			Alert.alert('Success', 'Your order is confirmed!');
+			// Alert.alert('Success', 'Your order is confirmed!');
+			router.replace({
+				pathname: '/orders/success',
+				params: {
+					orderId: currentOrderId!,
+				},
+			});
+			clearCart();
 		}
-	}, [presentPaymentSheet]);
+	}, [presentPaymentSheet, currentOrderId, router, clearCart]);
 
 	const onPaymentMethodPress = useCallback(
 		async (paymentMethodId: string) => {

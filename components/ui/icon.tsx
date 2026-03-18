@@ -13,7 +13,7 @@ export function Icon({
 	name,
 	color,
 	size,
-	strokeWidth = 1.4,
+	strokeWidth = 1.5,
 	...props
 }: IconProps & SvgProps & { strokeWidth?: number }) {
 	const LucideIcon = (

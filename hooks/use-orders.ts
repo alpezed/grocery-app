@@ -1,6 +1,8 @@
+import { useUser } from '@clerk/clerk-expo';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { Order, type CreateOrderBody } from '@/schema/order.schema';
 import { getOrderById, getOrders, updateOrder } from '@/services/order';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useUpdateOrder = (orderId: string) => {
 	const queryClient = useQueryClient();
@@ -18,9 +20,11 @@ export const useUpdateOrder = (orderId: string) => {
 };
 
 export const useGetOrders = () => {
+	const { user } = useUser();
 	return useQuery({
 		queryKey: ['orders'],
-		queryFn: getOrders,
+		queryFn: () => getOrders(user?.id!),
+		enabled: !!user?.id,
 	});
 };
 

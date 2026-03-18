@@ -23,6 +23,7 @@ export default function OrdersScreen() {
 						renderItem={({ item }) => <OrderItem order={item} />}
 						keyExtractor={item => item.id.toString()}
 						contentContainerStyle={{ flex: 1 }}
+						contentContainerClassName='gap-2'
 						ListEmptyComponent={
 							<EmptyState>
 								<EmptyState.Icon icon='Box' size={120} />
@@ -32,6 +33,7 @@ export default function OrdersScreen() {
 								</EmptyState.Description>
 							</EmptyState>
 						}
+						ItemSeparatorComponent={() => <View style={{ width: 15 }} />}
 					/>
 				</View>
 			)}

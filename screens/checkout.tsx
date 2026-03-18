@@ -169,7 +169,11 @@ export default function CheckoutScreen() {
 
 					<View className='mt-auto mb-8 gap-3 flex-row'>
 						{!isFirstStep && (
-							<Button onPress={handlePrevious} color='white' className='flex-1'>
+							<Button
+								onPress={handlePrevious}
+								color={isLastStep ? 'primary' : 'white'}
+								className='flex-1'
+							>
 								Previous
 							</Button>
 						)}
@@ -178,11 +182,11 @@ export default function CheckoutScreen() {
 								Next
 							</Button>
 						)}
-						{isLastStep && (
+						{/* {isLastStep && (
 							<Button onPress={onSubmit} className='flex-1'>
 								Place Order
 							</Button>
-						)}
+						)} */}
 					</View>
 				</View>
 			</View>
