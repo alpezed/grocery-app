@@ -169,6 +169,8 @@ export default function CheckoutScreen() {
 
 	const selectedAddress = addresses?.[0];
 
+	const isAddressScreen = currentStep === 1 && !selectedAddress;
+
 	return (
 		<StripeProvider
 			publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUB_KEY!}
@@ -212,7 +214,11 @@ export default function CheckoutScreen() {
 							</Button>
 						)}
 						{!isLastStep && (
-							<Button onPress={handleNext} className='flex-1'>
+							<Button
+								onPress={handleNext}
+								className='flex-1'
+								disabled={isAddressScreen}
+							>
 								Next
 							</Button>
 						)}
