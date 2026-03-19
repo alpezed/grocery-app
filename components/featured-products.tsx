@@ -93,7 +93,6 @@ export default function FeaturesProducts() {
 		const isFavorite = item.favorites?.some(
 			favorite => favorite.clerkId === user?.id
 		);
-		console.log(item.name, item.favorites, user?.id);
 
 		const getFavoriteId = () => {
 			return item.favorites?.find(favorite => favorite.clerkId === user?.id)
