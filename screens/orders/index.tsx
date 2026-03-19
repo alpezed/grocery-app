@@ -17,13 +17,15 @@ export default function OrdersScreen() {
 					<ActivityIndicator size='large' color={Colors.light.primaryDark} />
 				</View>
 			) : (
-				<View className='flex-1 p-5 gap-3'>
+				<View className='flex-1'>
 					<FlashList
 						data={orders?.data || []}
 						renderItem={({ item }) => <OrderItem order={item} />}
 						keyExtractor={item => item.id.toString()}
-						contentContainerStyle={{ flex: 1 }}
-						contentContainerClassName='gap-2'
+						contentContainerStyle={{
+							flex: orders?.data?.length === 0 ? 1 : undefined,
+						}}
+						contentContainerClassName='gap-2 p-4'
 						ListEmptyComponent={
 							<EmptyState>
 								<EmptyState.Icon icon='Box' size={120} />
