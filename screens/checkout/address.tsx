@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { Link, useRouter } from 'expo-router';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 import EmptyState from '@/components/empty-state';
 import { Button } from '@/components/ui/button';
@@ -41,17 +41,17 @@ function ActiveAddressCard({
 	}
 
 	return (
-		<View className='bg-white p-4 relative rounded-sm border gap-1 border-transparent'>
-			<TouchableOpacity
-				activeOpacity={0.8}
-				onPress={() => router.push('/address')}
+		<View className='bg-white p-4 relative rounded-lg border gap-1 border-transparent'>
+			<Link
 				className='p-2 items-center justify-center flex-row gap-1 absolute top-1 right-1.5'
+				href='/(modals)/select-address'
+				asChild
 			>
 				{/* <Icon name='Pencil' size={15} color={Colors.light.primaryDark} /> */}
 				<Text className='text-xs text-primary-dark font-medium'>
 					Change address
 				</Text>
-			</TouchableOpacity>
+			</Link>
 			<View className='flex-row justify-between mb-2'>
 				<Text className='text-base font-medium capitalize'>{address.name}</Text>
 			</View>

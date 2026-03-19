@@ -18,7 +18,7 @@ export function ShippingMethodCard({
 }) {
 	return (
 		<TouchableOpacity
-			className={`bg-white p-4 rounded-sm gap-3 flex-row border border-transparent items-center ${isActive ? 'border-primary-dark' : ''}`}
+			className={`bg-white p-4 rounded-lg gap-3 flex-row border border-transparent items-center ${isActive ? 'border-primary-dark' : ''}`}
 			activeOpacity={0.8}
 			onPress={onPress}
 		>

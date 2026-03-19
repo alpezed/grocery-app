@@ -54,7 +54,7 @@ function PaymentMethodCard({
 	return (
 		<TouchableOpacity
 			activeOpacity={0.6}
-			className='bg-white flex-1 p-4 rounded-sm border gap-2 border-transparent items-center justify-center shadow-xl/5'
+			className='bg-white flex-1 p-4 rounded-lg border gap-2 border-transparent items-center justify-center shadow-xl/5'
 			onPress={onPress}
 		>
 			<View className='flex-row items-center gap-2'>
