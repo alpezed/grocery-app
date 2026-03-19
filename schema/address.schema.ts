@@ -17,6 +17,7 @@ export const addressSchema = z.object({
 	city: z.string().min(1, { message: 'City is required' }),
 	country: z.string().min(1, { message: 'Country is required' }),
 	saveAddress: z.boolean().default(true),
+	isDefault: z.boolean().default(false),
 	clerkId: z.string().min(1, { message: 'Clerk ID is required' }),
 });
 

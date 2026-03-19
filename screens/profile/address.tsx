@@ -1,15 +1,5 @@
-import AddressList from '@/components/address-list';
-import AppHeader from '@/components/app-header';
-import EmptyState from '@/components/empty-state';
-import { Button } from '@/components/ui/button';
-import { Icon } from '@/components/ui/icon';
-import { Colors } from '@/constants/theme';
-import { useGetAddresses } from '@/lib/queries/addresses';
-import { Address, addressSchema } from '@/schema/address.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { FormProvider, Resolver, useForm } from 'react-hook-form';
 import {
 	ActivityIndicator,
 	Keyboard,
@@ -21,23 +11,17 @@ import {
 	View,
 } from 'react-native';
 
+import AddressList from '@/components/address-list';
+import AppHeader from '@/components/app-header';
+import EmptyState from '@/components/empty-state';
+import { Button } from '@/components/ui/button';
+import { Icon } from '@/components/ui/icon';
+import { Colors } from '@/constants/theme';
+import { useGetAddresses } from '@/lib/queries/addresses';
+
 export default function AddressScreen() {
 	const router = useRouter();
 	const { data: addresses, isLoading } = useGetAddresses();
-
-	const methods = useForm<Address>({
-		resolver: zodResolver(addressSchema) as Resolver<Address>,
-		defaultValues: {
-			name: '',
-			email: '',
-			phoneNumber: '',
-			address: '',
-			zipCode: '',
-			city: '',
-			country: '',
-			saveAddress: true,
-		},
-	});
 
 	return (
 		<View className='flex-1'>
@@ -68,15 +52,13 @@ export default function AddressScreen() {
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 						<ScrollView className='flex-1'>
 							<View className='flex-1 p-5 gap-3'>
-								<FormProvider {...methods}>
-									{addresses?.map(address => (
-										<AddressList
-											key={address.id}
-											address={address}
-											isDefault={address.saveAddress}
-										/>
-									))}
-								</FormProvider>
+								{addresses?.map(address => (
+									<AddressList
+										key={address.id}
+										address={address}
+										isDefault={address.isDefault}
+									/>
+								))}
 							</View>
 						</ScrollView>
 					</TouchableWithoutFeedback>

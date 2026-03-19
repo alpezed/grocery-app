@@ -190,21 +190,6 @@ class StrapiService {
 		}
 	}
 
-	async getAddresses() {
-		const query = qs.stringify({
-			populate: '*',
-		});
-		try {
-			const result = await this.request<APIResponse<AddressResponse[]>>(
-				`/addresses?${query}`
-			);
-			return result.data;
-		} catch (error) {
-			console.error('[StrapiService] Get Addresses Error:', error);
-			throw error;
-		}
-	}
-
 	async createAddress(address: Address) {
 		try {
 			const result = await this.request<APIResponse<AddressResponse>>(

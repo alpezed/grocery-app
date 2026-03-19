@@ -29,6 +29,7 @@ async function fetchAPI<T>(
 	const fetchOptions: RequestInit = {
 		headers: {
 			'Content-Type': 'application/json',
+			Authorization: `Bearer ${process.env.EXPO_PUBLIC_STRAPI_API_ADMIN_TOKEN}`,
 		},
 		method: options?.method || 'GET',
 	};
