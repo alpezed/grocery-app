@@ -1,10 +1,12 @@
 import { ClerkProvider } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
 import 'react-native-reanimated';
 import Toast from 'react-native-toast-message';
 import '../global.css';
@@ -12,10 +14,6 @@ import '../global.css';
 import AppHeader from '@/components/app-header';
 import { Colors } from '@/constants/theme';
 import { toastConfig } from '@/lib/toast';
-import { useOnboardingStore } from '@/store/use-onboarding';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ActivityIndicator } from 'react-native';
-
 export const unstable_settings = {
 	anchor: '(tabs)',
 };
@@ -38,8 +36,6 @@ export default function RootLayout() {
 		'Montserrat-SemiBold': require('@/assets/fonts/Montserrat-SemiBold.ttf'),
 		'Montserrat-Bold': require('@/assets/fonts/Montserrat-Bold.ttf'),
 	});
-	const completed = useOnboardingStore(state => state.completed);
-
 	useEffect(() => {
 		if (loaded) {
 			SplashScreen.hideAsync();
@@ -72,30 +68,10 @@ export default function RootLayout() {
 					>
 						<Stack.Screen name='(tabs)' />
 						<Stack.Screen name='(auth)' />
-						<Stack.Screen name='address' />
-						<Stack.Screen
-							name='reviews/index'
-							options={{
-								title: 'Reviews',
-							}}
-						/>
-						<Stack.Screen
-							name='reviews/create'
-							options={{ headerShown: false, title: 'Create Review' }}
-						/>
-					<Stack.Screen
-						name='products/[productId]'
-						options={{ headerShown: false }}
-					/>
-					<Stack.Screen
-						name='search/index'
-						options={{ headerShown: false }}
-					/>
-					<Stack.Screen
-						name='search/filter'
-						options={{ headerShown: false }}
-					/>
-						{!completed && <Stack.Screen name='onboarding' />}
+						<Stack.Screen name='onboarding' />
+						<Stack.Screen name='(profile)' />
+						<Stack.Screen name='products' />
+						<Stack.Screen name='reviews' />
 					</Stack>
 					<Toast config={toastConfig} position='bottom' />
 				</QueryClientProvider>

@@ -21,6 +21,7 @@ export default function TabLayout() {
 					height: 75,
 				},
 			}}
+			backBehavior='order'
 		>
 			<Tabs.Screen
 				name='index'
