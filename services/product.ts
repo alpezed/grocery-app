@@ -32,6 +32,9 @@ export async function getProducts(
 			image: {
 				fields: ['url', 'formats'],
 			},
+			favorites: {
+				fields: ['clerkId'],
+			},
 		},
 		filters,
 	});

@@ -1,3 +1,16 @@
+import { useAuth, useUser } from '@clerk/clerk-expo';
+import { useQueryClient } from '@tanstack/react-query';
+import React, { useEffect, useState } from 'react';
+import {
+	ActivityIndicator,
+	FlatList,
+	Pressable,
+	StyleSheet,
+	Text,
+	View,
+} from 'react-native';
+import Toast from 'react-native-toast-message';
+
 import ProductCard from '@/components/product-card';
 import SectionText from '@/components/section-text';
 import { Icon } from '@/components/ui/icon';
@@ -9,18 +22,7 @@ import {
 } from '@/lib/queries/products';
 import { Product } from '@/schema/product.schema';
 import { useCartStore } from '@/store/use-cart';
-import { useAuth, useUser } from '@clerk/clerk-expo';
-import { useQueryClient } from '@tanstack/react-query';
-import React from 'react';
-import {
-	ActivityIndicator,
-	FlatList,
-	Pressable,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native';
-import Toast from 'react-native-toast-message';
+import { useRouter } from 'expo-router';
 
 export function FavoriteButton({
 	favoriteId,
@@ -42,14 +44,21 @@ export function FavoriteButton({
 		useRemoveFromFavorite();
 	const { user } = useUser();
 	const { isSignedIn } = useAuth();
+	const [favorite, setFavorite] = useState(false);
+
+	useEffect(() => {
+		setFavorite(isFavorite);
+	}, [isFavorite]);
 
 	if (!isSignedIn) return null;
 
 	const onMarkAsFavorite = async () => {
 		if (!user?.id) return;
-		if (isFavorite && favoriteId) {
+		if (favorite && favoriteId) {
+			setFavorite(false);
 			await removeFromFavorite(favoriteId);
 		} else {
+			setFavorite(true);
 			await markAsFavorite({ productId, userId: user.id });
 		}
 		queryClient.invalidateQueries({ queryKey: ['product', productId] });
@@ -61,28 +70,30 @@ export function FavoriteButton({
 		<Pressable
 			onPress={onMarkAsFavorite}
 			disabled={isLoading}
-			className={`absolute top-2.5 right-2.5 bg-white rounded-full p-[5px] z-1 ${className} ${isLoading ? 'opacity-50' : 'disabled:opacity-50'}`}
+			className={`absolute top-2.5 right-2.5 bg-white rounded-full p-[5px] z-1 ${className}`}
 		>
 			<Icon
 				name='Heart'
 				size={size}
-				color={isFavorite ? 'white' : Colors.light.text}
-				fill={isFavorite ? Colors.light.heart : 'none'}
-				stroke={isFavorite ? Colors.light.heart : Colors.light.text}
+				color={favorite ? 'white' : Colors.light.text}
+				fill={favorite ? Colors.light.heart : 'none'}
+				stroke={favorite ? Colors.light.heart : Colors.light.text}
 			/>
 		</Pressable>
 	);
 }
 
 export default function FeaturesProducts() {
-	const { data: products, error, status, refetch } = useProducts();
+	const { data: products, error, status } = useProducts();
 	const { user } = useUser();
 	const { addItem } = useCartStore();
+	const router = useRouter();
 
 	const renderProductItem = ({ item }: { item: Product }) => {
 		const isFavorite = item.favorites?.some(
 			favorite => favorite.clerkId === user?.id
 		);
+		console.log(item.name, item.favorites, user?.id);
 
 		const getFavoriteId = () => {
 			return item.favorites?.find(favorite => favorite.clerkId === user?.id)
@@ -109,9 +120,7 @@ export default function FeaturesProducts() {
 		<View style={styles.container}>
 			<SectionText
 				title='Featured Products'
-				onPress={() => {
-					console.log('All categories');
-				}}
+				onPress={() => router.push('/products')}
 			/>
 			{status === 'pending' ? (
 				<View className='flex-1 items-center justify-center py-18'>
