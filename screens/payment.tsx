@@ -10,6 +10,7 @@ import { SvgProps } from 'react-native-svg';
 import ApplePay from '@/assets/icons/apple.svg';
 import CreditCard from '@/assets/icons/credit-card.svg';
 import Paypal from '@/assets/icons/paypal.svg';
+import { AppLoader } from '@/components/loader';
 import { Colors } from '@/constants/theme';
 import { useUpdateOrder } from '@/hooks/use-orders';
 import { Order } from '@/schema/order.schema';
@@ -73,18 +74,28 @@ export default function PaymentScreen() {
 	const router = useRouter();
 	const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
 	const updateOrderMutation = useUpdateOrder(currentOrderId!);
-
+	const [isLoading, setIsLoading] = useState(false);
+	const [paymentType, setPaymentType] = useState<string | null>('credit-card');
 	const { initPaymentSheet, presentPaymentSheet, confirmPlatformPayPayment } =
 		useStripe();
 
 	const createOrderMutation = useMutation({
 		mutationFn: async (): Promise<Order> => {
+			setIsLoading(true);
 			const cartItems = items?.map(item => ({
 				productId: item.documentId,
 				priceAtPurchase: item.price,
 				quantity: item.quantity,
 			}));
-			return await createOrder(cartItems);
+			if (!user?.id) {
+				// TODO: Popup a modal to login
+				Alert.alert(
+					'Please login to continue',
+					'You need to be logged in to create an order'
+				);
+				throw new Error('Login to continue');
+			}
+			return await createOrder(cartItems, user?.id);
 		},
 		onSuccess: data => {
 			if (!user?.id) {
@@ -97,12 +108,21 @@ export default function PaymentScreen() {
 				orderId: data.documentId,
 			});
 		},
+		onError: error => {
+			Alert.alert('Error', error.message);
+			setIsLoading(false);
+		},
 	});
 
 	const paymentIntentMutation = useMutation({
 		mutationFn: createPaymentIntent,
 		onSuccess: async data => {
 			const { customer, ephemeralKey, paymentIntent } = data;
+
+			if (!currentOrderId) {
+				Alert.alert('Error', 'Order not found');
+				return;
+			}
 
 			const { error } = await initPaymentSheet({
 				style: 'alwaysLight',
@@ -163,6 +183,8 @@ export default function PaymentScreen() {
 		},
 		onError: error => {
 			console.log('error', error);
+			Alert.alert('Error', error.message);
+			setIsLoading(false);
 		},
 	});
 
@@ -177,83 +199,146 @@ export default function PaymentScreen() {
 				paymentType: PlatformPay.PaymentType.Immediate,
 			}));
 
-			const { error, paymentIntent } = await confirmPlatformPayPayment(
-				clientSecret,
-				{
-					applePay: {
-						cartItems: appleCartItems as PlatformPay.CartSummaryItem[],
-						merchantCountryCode: 'US',
-						currencyCode: 'USD',
-						// requiredShippingAddressFields: [
-						// 	PlatformPay.ContactField.PostalAddress,
-						// ],
-						// requiredBillingContactFields: [
-						// 	PlatformPay.ContactField.PhoneNumber,
-						// ],
-					},
-				}
-			);
+			setIsLoading(false);
 
-			if (error) {
-				console.log('--error', error);
+			await new Promise(resolve => setTimeout(resolve, 1000));
+
+			const { error } = await confirmPlatformPayPayment(clientSecret, {
+				applePay: {
+					cartItems: appleCartItems as PlatformPay.CartSummaryItem[],
+					merchantCountryCode: 'US',
+					currencyCode: 'USD',
+					// requiredShippingAddressFields: [
+					// 	PlatformPay.ContactField.PostalAddress,
+					// ],
+					// requiredBillingContactFields: [
+					// 	PlatformPay.ContactField.PhoneNumber,
+					// ],
+				},
+			});
+
+			if (error?.code === 'Canceled') {
+				updateOrderMutation.mutate({
+					clerkId: user?.id,
+					orderStatus: 'cancelled',
+				});
+			}
+
+			if (error && error?.code !== 'Canceled') {
 				Alert.alert('Error', error.message);
 			} else {
-				Alert.alert('Success', 'Your order is confirmed!');
+				router.replace({
+					pathname: '/orders/success',
+					params: {
+						orderId: currentOrderId,
+					},
+				});
+				clearCart();
 			}
 		},
 		onError: error => {
-			console.log('error', error);
+			console.log('--applePayMutation', JSON.stringify(error, null, 2));
 		},
 	});
 
 	const openPaymentSheet = useCallback(async () => {
-		const { error } = await presentPaymentSheet();
-
-		if (error?.code === 'Canceled') {
-			updateOrderMutation.mutate({
-				clerkId: user?.id!,
-				orderStatus: 'cancelled',
-			});
+		if (!user?.id) {
+			// TODO: Popup a modal to login
+			Alert.alert(
+				'Please login to continue',
+				'You need to be logged in to create an order'
+			);
+			return;
 		}
 
-		if (error) {
-			Alert.alert(`Error code: ${error.code}`, error.message);
-		} else {
-			// Alert.alert('Success', 'Your order is confirmed!');
-			router.replace({
-				pathname: '/orders/success',
-				params: {
-					orderId: currentOrderId!,
-				},
-			});
-			clearCart();
+		try {
+			if (paymentType === 'apple-pay' && currentOrderId) {
+				await applePayMutation.mutateAsync({
+					clerkId: user?.id,
+					orderId: currentOrderId,
+				});
+				return;
+			}
+
+			setIsLoading(false);
+
+			await new Promise(resolve => setTimeout(resolve, 1000));
+
+			const { error } = await presentPaymentSheet();
+
+			if (error?.code === 'Canceled') {
+				updateOrderMutation.mutate({
+					clerkId: user?.id,
+					orderStatus: 'cancelled',
+				});
+			}
+
+			if (error && error?.code !== 'Canceled') {
+				Alert.alert(`Error code: ${error.code}`, error.message);
+			} else {
+				// Alert.alert('Success', 'Your order is confirmed!');
+				router.replace({
+					pathname: '/orders/success',
+					params: {
+						orderId: currentOrderId,
+					},
+				});
+				clearCart();
+			}
+		} catch (error) {
+			console.log('--openPaymentSheet', JSON.stringify(error, null, 2));
 		}
-	}, [presentPaymentSheet, currentOrderId, router, clearCart]);
+	}, [
+		clearCart,
+		presentPaymentSheet,
+		user?.id,
+		updateOrderMutation,
+		currentOrderId,
+		router,
+		paymentType,
+		applePayMutation,
+	]);
 
 	const onPaymentMethodPress = useCallback(
 		async (paymentMethodId: string) => {
 			if (!user?.id) {
-				Alert.alert('Error', 'User not found');
+				// TODO: Popup a modal to login
+				Alert.alert(
+					'Please login to continue',
+					'You need to be logged in to create an order'
+				);
 				return;
 			}
-			if (paymentMethodId === 'apple-pay') {
-				await applePayMutation.mutateAsync({ clerkId: user?.id, orderId: '1' });
-			} else if (paymentMethodId === 'credit-card') {
-				await createOrderMutation.mutateAsync();
-			}
+			setPaymentType(paymentMethodId);
+			await createOrderMutation.mutateAsync();
+			// if (paymentMethodId === 'apple-pay') {
+			// 	if (!currentOrderId) {
+			// 		Alert.alert('Error', 'Order not found');
+			// 		return;
+			// 	}
+			// 	await applePayMutation.mutateAsync({
+			// 		clerkId: user?.id,
+			// 		orderId: currentOrderId,
+			// 	});
+			// } else if (paymentMethodId === 'credit-card') {
+			// 	await createOrderMutation.mutateAsync();
+			// }
 		},
-		[applePayMutation, createOrderMutation, user?.id]
+		[createOrderMutation, user?.id]
 	);
 
 	return (
-		<View className='gap-3 flex-row'>
-			{paymentMethods.map(paymentMethod => (
-				<PaymentMethodCard
-					paymentMethod={paymentMethod}
-					key={paymentMethod.id}
-					onPress={() => onPaymentMethodPress(paymentMethod.id)}
-				/>
-			))}
-		</View>
+		<>
+			<AppLoader visible={isLoading} />
+			<View className='gap-3 flex-row'>
+				{paymentMethods.map(paymentMethod => (
+					<PaymentMethodCard
+						paymentMethod={paymentMethod}
+						key={paymentMethod.id}
+						onPress={() => onPaymentMethodPress(paymentMethod.id)}
+					/>
+				))}
+			</View>
+		</>
 	);
 }

@@ -34,9 +34,7 @@ export async function POST(request: Request) {
 
 		const { orderId, clerkId } = body;
 
-		console.log('orderId', orderId);
-
-		const orders = await getOrders();
+		const orders = await getOrders(clerkId);
 		const order = orders.data.find(order => order.documentId === orderId);
 		if (!order) {
 			return new Response(JSON.stringify({ error: 'Order not found' }), {
@@ -45,15 +43,13 @@ export async function POST(request: Request) {
 			});
 		}
 
-		console.log('--order', order);
-
 		const totalAmount = order.items?.reduce(
 			(sum, item) => sum + item.priceAtPurchase * item.quantity,
 			0
 		);
 
-		// console.log('totalAmount', totalAmount);
-		// console.log('orders', orders);
+		console.log('totalAmount', totalAmount);
+		console.log('orders', order);
 
 		const paymentIntent = await stripe.paymentIntents.create({
 			amount: Math.round(totalAmount * 100),
@@ -66,7 +62,6 @@ export async function POST(request: Request) {
 		});
 
 		await updateOrder(orderId, {
-			clerkId,
 			stripePaymentIntentId: paymentIntent.id,
 		});
 
@@ -82,6 +77,7 @@ export async function POST(request: Request) {
 			}
 		);
 	} catch (error) {
+		console.log(JSON.stringify(error, null, 2));
 		const errorMessage = error instanceof Error ? error.message : String(error);
 		return new Response(JSON.stringify({ error: errorMessage }), {
 			status: 500,

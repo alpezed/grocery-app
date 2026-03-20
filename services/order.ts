@@ -9,9 +9,13 @@ import {
 
 const orders = strapiApi.collection('orders');
 
-export async function createOrder(order: CreateOrderItemsBody[]) {
+export async function createOrder(
+	order: CreateOrderItemsBody[],
+	clerkId: string
+) {
 	const response = await orders.create({
 		orderStatus: 'placed',
+		clerkId: clerkId,
 		timeline: {
 			placed: new Date().toISOString(),
 		},
@@ -29,7 +33,7 @@ export async function updateOrder(
 }
 
 export async function getOrders(
-	clerkId: string
+	clerkId?: string
 ): Promise<StrapiCollectionResponse<Order>> {
 	const response = await orders.find({
 		populate: ['items', 'timeline'],
