@@ -48,9 +48,6 @@ export async function POST(request: Request) {
 			0
 		);
 
-		console.log('totalAmount', totalAmount);
-		console.log('orders', order);
-
 		const paymentIntent = await stripe.paymentIntents.create({
 			amount: Math.round(totalAmount * 100),
 			currency: 'usd',
@@ -58,6 +55,7 @@ export async function POST(request: Request) {
 			payment_method_types: ['card'],
 			metadata: {
 				orderId,
+				clerkId,
 			},
 		});
 

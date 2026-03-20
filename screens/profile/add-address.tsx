@@ -24,7 +24,7 @@ import Toast from 'react-native-toast-message';
 
 export default function AddAddressScreen() {
 	const { user } = useUser();
-	const { mutate: createAddress } = useCreateAddress();
+	const { mutateAsync: createAddress } = useCreateAddress();
 	const router = useRouter();
 
 	const {
@@ -48,20 +48,15 @@ export default function AddAddressScreen() {
 
 	const onSubmit = async (data: Address) => {
 		if (!user) {
-			Toast.show({
-				type: 'error',
-				text1: 'User not found',
-			});
+			Toast.show({ type: 'error', text1: 'User not found' });
 			return;
 		}
 		try {
-			createAddress({ ...data, clerkId: user.id });
-			Toast.show({
-				type: 'success',
-				text1: 'Address created successfully',
-			});
+			await createAddress({ ...data, clerkId: user.id });
+			Toast.show({ type: 'success', text1: 'Address created successfully' });
 			router.back();
 		} catch (error) {
+			console.log('--error', JSON.stringify(error, null, 2));
 			console.error('Error creating address', (error as Error).message);
 			Toast.show({
 				type: 'error',

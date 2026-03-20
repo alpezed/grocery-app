@@ -9,9 +9,11 @@ import { Address, AddressResponse } from '@/schema/address.schema';
 function ActiveAddressCard({
 	address,
 	isLoading,
+	withAddresses,
 }: {
 	address?: Address;
 	isLoading: boolean;
+	withAddresses: boolean;
 }) {
 	const router = useRouter();
 
@@ -19,6 +21,26 @@ function ActiveAddressCard({
 		return (
 			<View className='flex-1 items-center justify-center'>
 				<ActivityIndicator size='small' color={Colors.light.primaryDark} />
+			</View>
+		);
+	}
+
+	// UI to tell user to select an address from the list of addresses
+	if (withAddresses && !address) {
+		return (
+			<View className='flex-1 justify-center gap-4 px-4 py-8'>
+				<EmptyState>
+					<EmptyState.Icon icon='MapPinPlus' size={100} />
+					<EmptyState.Title>Select an address</EmptyState.Title>
+					<View className='max-w-3/4 mx-auto'>
+						<EmptyState.Description>
+							Select an address to continue.
+						</EmptyState.Description>
+					</View>
+					<Button onPress={() => router.push('/(modals)/select-address')}>
+						Select Address
+					</Button>
+				</EmptyState>
 			</View>
 		);
 	}
@@ -34,7 +56,9 @@ function ActiveAddressCard({
 							Add an address to continue.
 						</EmptyState.Description>
 					</View>
-					<Button onPress={() => router.push('/address')}>Add Address</Button>
+					<Button onPress={() => router.push('/add-address')}>
+						Add Address
+					</Button>
 				</EmptyState>
 			</View>
 		);
@@ -64,15 +88,21 @@ function ActiveAddressCard({
 }
 
 export function CheckoutAddress({
+	withAddresses,
 	defaultAddress,
 	isLoading,
 }: {
 	defaultAddress?: AddressResponse;
 	isLoading: boolean;
+	withAddresses: boolean;
 }) {
 	return (
 		<View className='flex-1 gap-4'>
-			<ActiveAddressCard address={defaultAddress} isLoading={isLoading} />
+			<ActiveAddressCard
+				address={defaultAddress}
+				isLoading={isLoading}
+				withAddresses={withAddresses}
+			/>
 		</View>
 	);
 }

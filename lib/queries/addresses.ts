@@ -25,18 +25,20 @@ export const useCreateAddress = () => {
 			await queryClient.cancelQueries({ queryKey: ['address'] });
 
 			// Snapshot the previous value
-			const previousAddresses = queryClient.getQueryData<AddressResponse[]>([
-				'address',
-			]);
+			const previousAddresses = queryClient.getQueryData<{
+				data: AddressResponse[];
+			}>(['address']);
 
 			// Optimistically update to the new value
-			queryClient.setQueryData(['address'], (old: AddressResponse[]) => [
-				...old,
-				{
-					id: previousAddresses?.length ? previousAddresses.length + 1 : 1,
-					...address,
-				},
-			]);
+			queryClient.setQueryData(
+				['address'],
+				(old: { data: AddressResponse[] }) => {
+					return {
+						...old,
+						data: [...old.data, { id: old.data.length + 1, ...address }],
+					};
+				}
+			);
 
 			// Return a context object with the snapshotted value
 			return { previousAddresses };

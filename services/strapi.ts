@@ -191,6 +191,7 @@ class StrapiService {
 	}
 
 	async createAddress(address: Address) {
+		console.log({ address });
 		try {
 			const result = await this.request<APIResponse<AddressResponse>>(
 				`/addresses`,

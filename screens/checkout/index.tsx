@@ -8,6 +8,7 @@ import { Stepper } from '@/components/ui/stepper';
 import { useGetAddresses } from '@/lib/queries/addresses';
 import PaymentScreen from '@/screens/payment';
 
+import { useSelectedAddressStore } from '@/store/use-address';
 import { CheckoutAddress } from './address';
 import { ShippingMethodCard } from './shipping-method';
 
@@ -48,6 +49,7 @@ export default function CheckoutScreen() {
 	const [selectedShippingMethod, setSelectedShippingMethod] =
 		useState<ShippingMethod | null>(shippingMethods[0]);
 	const { data: addresses, isLoading: isLoadingAddresses } = useGetAddresses();
+	const defaultAddress = useSelectedAddressStore(state => state.defaultAddress);
 
 	const handleNext = () => {
 		setCurrentStep(currentStep + 1);
@@ -59,8 +61,6 @@ export default function CheckoutScreen() {
 
 	const isFirstStep = currentStep === 0;
 	const isLastStep = currentStep === TOTAL_FORM_STEPS - 1;
-
-	const defaultAddress = addresses?.find(address => address.isDefault);
 
 	const isAddressScreen = currentStep === 1 && !defaultAddress;
 
@@ -89,6 +89,7 @@ export default function CheckoutScreen() {
 					)}
 					{currentStep === 1 && (
 						<CheckoutAddress
+							withAddresses={!!addresses?.length && addresses.length > 0}
 							defaultAddress={defaultAddress}
 							isLoading={isLoadingAddresses}
 						/>

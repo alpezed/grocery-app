@@ -39,11 +39,34 @@ export default function TransactionsScreen() {
 	const router = useRouter();
 	const { data: transactions, status, error } = useTransactions();
 
+	console.log('--transactions', JSON.stringify(transactions, null, 2));
+
 	useEffect(() => {
 		if (error) {
 			Alert.alert('Error', 'Failed to fetch transactions');
 		}
 	}, [error, router]);
+
+	if (status === 'success' && transactions?.data.length === 0) {
+		return (
+			<View className='flex-1'>
+				<AppHeader title='Transactions' />
+				<View className='flex-1'>
+					<EmptyState>
+						<EmptyState.Icon
+							icon='CreditCard'
+							size={120}
+							color={Colors.light.primaryDark}
+						/>
+						<EmptyState.Title>No transactions found</EmptyState.Title>
+						<EmptyState.Description>
+							You have not made any transactions yet.
+						</EmptyState.Description>
+					</EmptyState>
+				</View>
+			</View>
+		);
+	}
 
 	return (
 		<View className='flex-1'>

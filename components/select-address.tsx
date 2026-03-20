@@ -2,6 +2,7 @@ import { Icon } from '@/components/ui/icon';
 import { Colors } from '@/constants/theme';
 import { useUpdateAddress } from '@/lib/queries/addresses';
 import { AddressResponse } from '@/schema/address.schema';
+import { useSelectedAddressStore } from '@/store/use-address';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
@@ -16,10 +17,13 @@ export function SelectAddress({
 	const { mutate: updateAddress, isPending: isUpdatingAddress } =
 		useUpdateAddress(address.documentId);
 	const router = useRouter();
+	const setDefaultAddress = useSelectedAddressStore(
+		state => state.setDefaultAddress
+	);
 
 	const onPress = async () => {
 		updateAddress({ isDefault: true });
-		// queryClient.invalidateQueries({ queryKey: ['address'] });
+		setDefaultAddress(address);
 		router.back();
 	};
 
