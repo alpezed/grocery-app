@@ -62,9 +62,11 @@ export default function CartScreen() {
 			<AppHeader
 				title='Shopping Cart'
 				headerRight={
-					<Pressable onPress={onClearCart}>
-						<Icon name='RotateCcw' size={22} />
-					</Pressable>
+					items.length > 0 && (
+						<Pressable onPress={onClearCart}>
+							<Icon name='RotateCcw' size={22} />
+						</Pressable>
+					)
 				}
 			/>
 			{items.length > 0 ? (
