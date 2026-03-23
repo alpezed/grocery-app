@@ -39,8 +39,6 @@ export default function TransactionsScreen() {
 	const router = useRouter();
 	const { data: transactions, status, error } = useTransactions();
 
-	console.log('--transactions', JSON.stringify(transactions, null, 2));
-
 	useEffect(() => {
 		if (error) {
 			Alert.alert('Error', 'Failed to fetch transactions');

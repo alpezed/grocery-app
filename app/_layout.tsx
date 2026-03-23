@@ -1,5 +1,6 @@
 import { ClerkProvider } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
@@ -56,51 +57,53 @@ export default function RootLayout() {
 			}}
 		>
 			<ThemeProvider value={DefaultTheme}>
-				<ClerkProvider tokenCache={tokenCache}>
-					<QueryClientProvider client={queryClient}>
-						<Stack
-							screenOptions={{
-								headerShown: false,
-								headerShadowVisible: false,
-								header: props => (
-									<AppHeader
-										title={props.options.title as string}
-										showBack={props.options.headerBackVisible as boolean}
-										headerRight={props.options.headerRight}
-									/>
-								),
-								contentStyle: {
-									backgroundColor: Colors.light.backgroundLight,
-								},
-							}}
-						>
-							<Stack.Screen name='(tabs)' />
-							<Stack.Screen name='(auth)' />
-							<Stack.Screen name='onboarding' />
-							<Stack.Screen name='(profile)' />
-							<Stack.Screen name='products' />
-							<Stack.Screen name='reviews' />
-							<Stack.Screen
-								name='(modals)'
-								options={{
-									presentation: 'formSheet',
-									sheetAllowedDetents: [0.5, 0.8, 1],
-									// sheetInitialDetentIndex: 0,
-									// sheetGrabberVisible: true,
-									sheetCornerRadius: 24,
-									sheetGrabberVisible: true,
-									// sheetLargestUndimmedDetentIndex: 1,
-									contentStyle: { height: '100%' },
-									headerTitleStyle: {
-										fontFamily: 'Montserrat-Bold', // Use your loaded font name
-										fontSize: 18,
+				<ActionSheetProvider>
+					<ClerkProvider tokenCache={tokenCache}>
+						<QueryClientProvider client={queryClient}>
+							<Stack
+								screenOptions={{
+									headerShown: false,
+									headerShadowVisible: false,
+									header: props => (
+										<AppHeader
+											title={props.options.title as string}
+											showBack={props.options.headerBackVisible as boolean}
+											headerRight={props.options.headerRight}
+										/>
+									),
+									contentStyle: {
+										backgroundColor: Colors.light.backgroundLight,
 									},
 								}}
-							/>
-						</Stack>
-						<Toast config={toastConfig} position='bottom' />
-					</QueryClientProvider>
-				</ClerkProvider>
+							>
+								<Stack.Screen name='(tabs)' />
+								<Stack.Screen name='(auth)' />
+								<Stack.Screen name='onboarding' />
+								<Stack.Screen name='(profile)' />
+								<Stack.Screen name='products' />
+								<Stack.Screen name='reviews' />
+								<Stack.Screen
+									name='(modals)'
+									options={{
+										presentation: 'formSheet',
+										sheetAllowedDetents: [0.5, 0.8, 1],
+										// sheetInitialDetentIndex: 0,
+										// sheetGrabberVisible: true,
+										sheetCornerRadius: 24,
+										sheetGrabberVisible: true,
+										// sheetLargestUndimmedDetentIndex: 1,
+										contentStyle: { height: '100%' },
+										headerTitleStyle: {
+											fontFamily: 'Montserrat-Bold', // Use your loaded font name
+											fontSize: 18,
+										},
+									}}
+								/>
+							</Stack>
+							<Toast config={toastConfig} position='bottom' />
+						</QueryClientProvider>
+					</ClerkProvider>
+				</ActionSheetProvider>
 			</ThemeProvider>
 		</View>
 	);
